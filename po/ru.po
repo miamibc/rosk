@@ -2,11 +2,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rosk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-20 17:28+0200\n"
 "PO-Revision-Date: 2026-11-20 17:00+0200\n"
 "Last-Translator: Rosk developers\n"
 "Language-Team: Russian\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:10+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,29 +26,25 @@ msgstr "Запустить без окна"
 msgid "Print the version"
 msgstr "Показать версию"
 
-#: rosk/app.py:168
-msgid "A note you write down and cross out."
-msgstr "Заметка, которую написал и вычеркнул."
-
-#: rosk/app.py:213
+#: rosk/app.py:210
 msgid "Rosk · Today"
 msgstr "Rosk · Сегодня"
 
-#: rosk/app.py:214
+#: rosk/app.py:211
 msgid "{} task for today"
 msgid_plural "{} tasks for today"
 msgstr[0] "{} задача на сегодня"
 msgstr[1] "{} задачи на сегодня"
 msgstr[2] "{} задач на сегодня"
 
-#: rosk/app.py:216
+#: rosk/app.py:213
 msgid "{} overdue"
 msgid_plural "{} overdue"
 msgstr[0] "{} просрочена"
 msgstr[1] "{} просрочены"
 msgstr[2] "{} просрочено"
 
-#: rosk/app.py:222
+#: rosk/app.py:219
 msgid "Open"
 msgstr "Открыть"
 
@@ -277,6 +273,34 @@ msgstr "Keep не подключён"
 #: rosk/sync/manager.py:175
 msgid "Keep sync failed: {}"
 msgstr "Ошибка синхронизации Keep: {}"
+
+#: rosk/ui/about.py:36 rosk/ui/window.py:103
+msgid "About Rosk"
+msgstr "О Rosk"
+
+#: rosk/ui/about.py:47
+msgid "Version {}"
+msgstr "Версия {}"
+
+#: rosk/ui/about.py:48
+msgid "A note you write down and cross out."
+msgstr "Заметка, которую написал и вычеркнул."
+
+#: rosk/ui/about.py:49
+msgid ""
+"Tasks sync with Google Tasks through GNOME Online Accounts, notes with "
+"Google Keep."
+msgstr "Задачи синхронизируются через сетевые учётные записи GNOME."
+
+#: rosk/ui/about.py:52
+msgid "Website"
+msgstr "Сайт"
+
+#: rosk/ui/about.py:59
+msgid ""
+"This program comes with absolutely no warranty. It is free software under "
+"the <a href=\"{}\">GNU General Public License, version 3 or later</a>."
+msgstr "Эта программа поставляется без каких-либо гарантий. Это свободная программа под лицензией <a href=\"{}\">GNU General Public License версии 3 или новее</a>."
 
 #: rosk/ui/editor.py:65
 msgid "Close"
@@ -647,10 +671,6 @@ msgstr "Новый список"
 #: rosk/ui/window.py:102 rosk/ui/window.py:857
 msgid "Keyboard Shortcuts"
 msgstr "Комбинации клавиш"
-
-#: rosk/ui/window.py:103
-msgid "About Rosk"
-msgstr "О Rosk"
 
 #: rosk/ui/window.py:107
 msgid "Main Menu"

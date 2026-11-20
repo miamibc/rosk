@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5e5c64"/><stop offset="1" stop-color="#241f31"/></linearGradient></defs>
+  <rect x="8" y="12" width="112" height="108" rx="24" fill="#000"/>
+  <rect x="8" y="8" width="112" height="108" rx="24" fill="url(#g)"/>
+  <circle cx="40" cy="62" r="17" fill="#2ec27e"/>
+  <g fill="#fff">
+    <rect x="-6" y="-3" width="12" height="6" rx="3" transform="translate(35 64) rotate(45)"/>
+    <rect x="-9" y="-3" width="18" height="6" rx="3" transform="translate(44 60) rotate(-45)"/>
+  </g>
+  <g fill="#fff" opacity="0.4">
+    <rect x="66" y="55" width="15" height="14" rx="4"/>
+    <rect x="85" y="55" width="11" height="14" rx="4"/>
+    <rect x="100" y="55" width="8" height="14" rx="4"/>
+  </g>
+  <rect x="62" y="59.5" width="49" height="5" rx="2.5" fill="#fff"/>
+  <rect x="66" y="80" width="28" height="8" rx="4" fill="#fff" opacity="0.35"/>
+  <rect x="66" y="36" width="34" height="8" rx="4" fill="#fff" opacity="0.35"/>
+</svg>

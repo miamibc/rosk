@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:10+0200\n"
+"POT-Creation-Date: 2026-11-20 17:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,27 +30,23 @@ msgstr ""
 msgid "Print the version"
 msgstr ""
 
-#: rosk/app.py:168
-msgid "A note you write down and cross out."
-msgstr ""
-
-#: rosk/app.py:213
+#: rosk/app.py:210
 msgid "Rosk · Today"
 msgstr ""
 
-#: rosk/app.py:214
+#: rosk/app.py:211
 msgid "{} task for today"
 msgid_plural "{} tasks for today"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rosk/app.py:216
+#: rosk/app.py:213
 msgid "{} overdue"
 msgid_plural "{} overdue"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rosk/app.py:222
+#: rosk/app.py:219
 msgid "Open"
 msgstr ""
 
@@ -274,6 +270,34 @@ msgstr ""
 
 #: rosk/sync/manager.py:175
 msgid "Keep sync failed: {}"
+msgstr ""
+
+#: rosk/ui/about.py:36 rosk/ui/window.py:103
+msgid "About Rosk"
+msgstr ""
+
+#: rosk/ui/about.py:47
+msgid "Version {}"
+msgstr ""
+
+#: rosk/ui/about.py:48
+msgid "A note you write down and cross out."
+msgstr ""
+
+#: rosk/ui/about.py:49
+msgid ""
+"Tasks sync with Google Tasks through GNOME Online Accounts, notes with "
+"Google Keep."
+msgstr ""
+
+#: rosk/ui/about.py:52
+msgid "Website"
+msgstr ""
+
+#: rosk/ui/about.py:59
+msgid ""
+"This program comes with absolutely no warranty. It is free software under "
+"the <a href=\"{}\">GNU General Public License, version 3 or later</a>."
 msgstr ""
 
 #: rosk/ui/editor.py:65
@@ -638,10 +662,6 @@ msgstr ""
 
 #: rosk/ui/window.py:102 rosk/ui/window.py:857
 msgid "Keyboard Shortcuts"
-msgstr ""
-
-#: rosk/ui/window.py:103
-msgid "About Rosk"
 msgstr ""
 
 #: rosk/ui/window.py:107

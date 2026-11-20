@@ -45,6 +45,8 @@ def schedule_snapshot(app, win, path):
             elif name == "search":
                 win.search_button.set_active(True)
                 win.search_entry.set_text(arg)
+            elif name == "about":
+                app.activate_action("about", None)
             elif name == "prefs":
                 app.activate_action("preferences", None)
             elif name == "quick":
