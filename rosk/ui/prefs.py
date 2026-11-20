@@ -154,6 +154,20 @@ class Preferences(Adw.PreferencesDialog):
         default_email = self.meta.get_meta("account_email") or ""
         self.keep_email = Adw.EntryRow(title=_("Email"), text=default_email)
         add(self.keep_email)
+
+        from .keep_login import INSTALL_HINT, webkit_available
+
+        sign_in = Adw.ButtonRow(title=_("Sign in with Google…"), start_icon_name="avatar-default-symbolic")
+        sign_in.add_css_class("suggested-action")
+        if webkit_available():
+            sign_in.connect("activated", self._keep_sign_in)
+        else:
+            sign_in.set_sensitive(False)
+            sign_in.set_title(_("Sign-in window needs: {}").format(INSTALL_HINT))
+        add(sign_in)
+
+        manual = Adw.ExpanderRow(title=_("Enter the token manually"),
+                                 subtitle=_("If the sign-in window does not work"))
         steps = Adw.ActionRow(
             title=_("1. Sign in at accounts.google.com/EmbeddedSetup"),
             subtitle=_("2. Accept, then copy the “oauth_token” cookie (Developer Tools → Storage → Cookies)"),
@@ -161,14 +175,42 @@ class Preferences(Adw.PreferencesDialog):
         steps.add_suffix(Gtk.Image.new_from_icon_name("adw-external-link-symbolic"))
         steps.connect("activated", lambda *_: Gtk.UriLauncher(
             uri="https://accounts.google.com/EmbeddedSetup").launch(self.get_root(), None, None, None))
-        add(steps)
+        manual.add_row(steps)
         self.keep_token = Adw.PasswordEntryRow(title=_("oauth_token cookie"))
-        add(self.keep_token)
+        manual.add_row(self.keep_token)
         connect = Adw.ButtonRow(title=_("Connect Keep"))
-        connect.add_css_class("suggested-action")
         connect.connect("activated", self._keep_connect)
-        add(connect)
+        manual.add_row(connect)
+        add(manual)
         self._keep_connect_row = connect
+
+    def _keep_sign_in(self, row):
+        from .keep_login import KeepLoginWindow
+
+        email = self.keep_email.get_text().strip()
+        if not email:
+            self.add_toast(Adw.Toast(title=_("Enter the email of the Keep account")))
+            return
+        win = KeepLoginWindow(self.get_root(), email)
+        win.connect("finished", self._keep_signed_in)
+        win.present()
+
+    def _keep_signed_in(self, _win, ok, email, value):
+        if not ok:
+            if value:
+                self.add_toast(Adw.Toast(title=_("Keep login failed: {}").format(value)))
+            return
+        from ..auth import secrets
+
+        try:
+            secrets.store_keep_token(email, value)
+        except Exception as e:
+            self.add_toast(Adw.Toast(title=_("Keep login failed: {}").format(e)))
+            return
+        self._set("keep_email", email)
+        self.app.sync.now()
+        self._fill_keep()
+        self.add_toast(Adw.Toast(title=_("Keep connected")))
 
     def _keep_connect(self, row):
         email = self.keep_email.get_text().strip()

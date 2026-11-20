@@ -29,6 +29,8 @@ packages (preinstalled on Ubuntu 26.04):
 
 ```sh
 sudo apt install python3-gi python3-venv gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-goa-1.0 gir1.2-secret-1
+# for the Google Keep sign-in window:
+sudo apt install gir1.2-webkit-6.0
 ```
 
 ## Install
@@ -50,7 +52,7 @@ back in Rosk shows a compact AppIndicator icon instead.
   `через неделю`), `#list` for the list, `n:` at the start for a note, and
   `Trip: - tickets - hotel` for subtasks or checklist items.
 - Search tasks and notes right from the GNOME overview.
-- Google Keep: Preferences → Google Keep. Google has no public Keep API for personal accounts,
+- Google Keep: Preferences → Google Keep → Sign in with Google. Google has no public Keep API for personal accounts,
   so Rosk uses the unofficial [gkeepapi](https://github.com/kiwiz/gkeepapi) library.
 
 ## Develop

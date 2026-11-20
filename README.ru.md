@@ -29,6 +29,8 @@ GNOME 48 или новее, аккаунт Google в «Настройки → С
 
 ```sh
 sudo apt install python3-gi python3-venv gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-goa-1.0 gir1.2-secret-1
+# для окна входа в Google Keep:
+sudo apt install gir1.2-webkit-6.0
 ```
 
 ## Установка
@@ -49,7 +51,7 @@ make uninstall    # удаляет приложение, данные остаю
 - Синтаксис: `завтра`, `в пт`, `12.12`, `через 3 дня` (английский тоже: `tomorrow`, `fri`),
   `#список`, `n:` в начале — заметка, `Поездка: - билеты - отель` — подзадачи или пункты списка.
 - Поиск задач и заметок прямо из обзора GNOME.
-- Google Keep: Настройки → Google Keep. Для личных аккаунтов у Google нет публичного API Keep,
+- Google Keep: Настройки → Google Keep → Войти через Google. Для личных аккаунтов у Google нет публичного API Keep,
   поэтому Rosk использует неофициальную библиотеку [gkeepapi](https://github.com/kiwiz/gkeepapi).
 
 ## Разработка
