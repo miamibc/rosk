@@ -166,7 +166,7 @@ class RoskApp(Adw.Application):
             application_name="Rosk", application_icon=APP_ID, version=__version__,
             developer_name="Sergei Miami", website="https://github.com/miamibc/rosk",
             comments=_("A note you write down and cross out."),
-            license_type=Gtk.License.GPL_3_0)
+            license_type=Gtk.License.GPL_3_0)  # GPL-3.0-or-later
         about.present(self._window())
 
     def _quick(self):

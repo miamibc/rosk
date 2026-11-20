@@ -98,6 +98,10 @@ Run `make` to list them all.
 | `make dist` | Source archive `dist/rosk-<version>.tar.gz` |
 | `make clean` | Remove `build/`, `dist/` and caches (not your data) |
 
+## License
+
+Rosk is free software under the [GNU General Public License v3.0 or later](LICENSE).
+
 ## Documentation
 
 The design documents are in Russian.
