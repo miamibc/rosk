@@ -163,6 +163,14 @@ def shots(app):
     style.set_color_scheme(Adw.ColorScheme.FORCE_DARK)
     pump(500)
 
+    win.show_view("today")
+    app.activate_action("about", None)
+    shot("about.png", wait=900)
+    dialog = win.get_visible_dialog()
+    if dialog:
+        dialog.close()
+    pump(400)
+
     app.activate_action("quick-add", None)
     pump(600)
     q = app.quick

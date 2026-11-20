@@ -1,4 +1,4 @@
-# Tests on every push; on main also builds the source archive (like picco's release flow).
+# Tests on every push; on the default branch also builds the source archive (like picco's release flow).
 name: release
 
 on:
@@ -20,7 +20,7 @@ jobs:
 
   dist:
     needs: test
-    if: github.ref == 'refs/heads/main'
+    if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

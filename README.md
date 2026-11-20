@@ -34,6 +34,8 @@ seconds, and checking it off even less.
 | One-line syntax: date, list and subtasks are recognized as you type | Upcoming tasks by day, light style |
 | ![Quick add](docs/screenshots/quick-add.png) | ![Notes, light style](docs/screenshots/notes-light.png) |
 | Quick add: task or note, `#` suggests your lists | Notes in the light style |
+| ![About](docs/screenshots/about.png) | |
+| The About dialog | |
 
 Screenshots use made-up data; `tools/screenshots.py` regenerates them.
 
