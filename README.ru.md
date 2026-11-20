@@ -8,7 +8,7 @@ GNOME, главное в нём — скорость и краткость: за
 
 > Статус: первая рабочая версия (0.1). Задачи синхронизируются с Google Tasks; для Keep нужно один раз войти в настройках.
 
-![Rosk: задачи на сегодня](docs/screenshots/today.png)
+![Rosk: задачи на сегодня](docs/screenshots/today.png?v=2)
 
 ## Что умеет
 
@@ -26,16 +26,48 @@ GNOME, главное в нём — скорость и краткость: за
 
 ## Скриншоты
 
-| | |
-|---|---|
-| ![Список задач и редактор](docs/screenshots/list-editor.png) | ![Заметки](docs/screenshots/notes.png) |
-| Списки, подзадачи и панель редактирования | Заметки Google Keep: закреплённые и цветные |
-| ![Редактирование заметки-списка](docs/screenshots/note-editor.png) | ![Синтаксис быстрого ввода](docs/screenshots/quick-syntax.png) |
-| Заметки-списки: отмеченные пункты сворачиваются, как в Keep | Одна строка: дата, список и подзадачи распознаются на лету |
-| ![Быстрый ввод](docs/screenshots/quick-add.png) | ![Предстоящие, светлая тема](docs/screenshots/upcoming-light.png) |
-| Быстрый ввод: задача или заметка, после `#` подсказываются списки | Предстоящие задачи по дням, светлая тема |
-| ![Заметки, светлая тема](docs/screenshots/notes-light.png) | ![О программе](docs/screenshots/about.png) |
-| Заметки в светлой теме | Окно «О программе» |
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/list-editor.png?v=2" alt="Список задач и редактор"><br>
+<em>Списки, подзадачи и панель редактирования</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes.png?v=2" alt="Заметки"><br>
+<em>Заметки Google Keep: закреплённые и цветные</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/note-editor.png?v=2" alt="Редактирование заметки-списка"><br>
+<em>Списки с флажками: отмеченное сворачивается, как в Keep</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Синтаксис быстрого ввода"><br>
+<em>Дата, список и подзадачи распознаются на лету</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/quick-add.png?v=2" alt="Быстрый ввод"><br>
+<em>Быстрый ввод: задача или заметка, после <code>#</code> — подсказки списков</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/upcoming-light.png?v=2" alt="Предстоящие, светлая тема"><br>
+<em>Предстоящие задачи по дням, светлая тема</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes-light.png?v=2" alt="Заметки, светлая тема"><br>
+<em>Заметки в светлой теме</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/about.png?v=2" alt="О программе"><br>
+<em>О программе</em>
+</td>
+</tr>
+</table>
 
 ## Требования
 

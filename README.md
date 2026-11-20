@@ -8,7 +8,7 @@ seconds, and checking it off even less.
 
 > Status: first working version (0.1). Tasks sync with Google Tasks; Keep sync needs a one-time login in Preferences.
 
-![Rosk: today's tasks](docs/screenshots/today.png)
+![Rosk: today's tasks](docs/screenshots/today.png?v=2)
 
 ## What it does
 
@@ -26,16 +26,48 @@ seconds, and checking it off even less.
 
 ## Screenshots
 
-| | |
-|---|---|
-| ![Task list with the editor](docs/screenshots/list-editor.png) | ![Notes](docs/screenshots/notes.png) |
-| Lists, subtasks and the editor pane | Google Keep notes, pinned and colored |
-| ![Editing a checklist note](docs/screenshots/note-editor.png) | ![Quick-capture syntax](docs/screenshots/quick-syntax.png) |
-| Checklist notes: checked items fold away, like in Keep | One-line syntax: date, list and subtasks are recognized as you type |
-| ![Quick add](docs/screenshots/quick-add.png) | ![Upcoming, light style](docs/screenshots/upcoming-light.png) |
-| Quick add: task or note, `#` suggests your lists | Upcoming tasks by day, light style |
-| ![Notes, light style](docs/screenshots/notes-light.png) | ![About](docs/screenshots/about.png) |
-| Notes in the light style | The About dialog |
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/list-editor.png?v=2" alt="Task list with the editor"><br>
+<em>Lists, subtasks and the editor pane</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes.png?v=2" alt="Notes"><br>
+<em>Google Keep notes, pinned and colored</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/note-editor.png?v=2" alt="Editing a checklist note"><br>
+<em>Checklists: checked items fold away, like in Keep</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Quick-capture syntax"><br>
+<em>Date, list and subtasks are recognized as you type</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/quick-add.png?v=2" alt="Quick add"><br>
+<em>Quick add: a task or a note, <code>#</code> suggests your lists</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/upcoming-light.png?v=2" alt="Upcoming, light style"><br>
+<em>Upcoming tasks by day, light style</em>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes-light.png?v=2" alt="Notes, light style"><br>
+<em>Notes in the light style</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/about.png?v=2" alt="About"><br>
+<em>About Rosk</em>
+</td>
+</tr>
+</table>
 
 ## Requirements
 
