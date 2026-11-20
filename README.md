@@ -93,7 +93,7 @@ Run `make` to list them all.
 | `make check` | Everything before a commit: lint, tests, extension syntax, settings schema, translations |
 | `make pot` | Update `po/rosk.pot` from the code and merge it into the translations |
 | `make locale` | Compile translations |
-| `make screenshots` | Regenerate the README screenshots from made-up demo data |
+| `make screenshots` | Regenerate the README screenshots |
 | **Release** | |
 | `make dist` | Source archive `dist/rosk-<version>.tar.gz` |
 | `make clean` | Remove `build/`, `dist/` and caches (not your data) |

@@ -67,7 +67,7 @@ locale:  ## Compile translations into build/locale
 		msgfmt -o build/locale/$$l/LC_MESSAGES/rosk.mo po/$$l.po; \
 	done
 
-screenshots: $(VENV) locale  ## Regenerate docs/screenshots from made-up demo data
+screenshots: $(VENV) locale  ## Regenerate docs/screenshots
 	$(VENV) tools/screenshots.py
 
 # ---------- install ----------
