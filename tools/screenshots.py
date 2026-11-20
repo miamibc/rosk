@@ -6,6 +6,7 @@ Runs a separate app instance (own app ID, temporary data dir, no sync, no tray i
 """
 
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -126,15 +127,37 @@ def pump(ms):
         time.sleep(0.005)
 
 
+# every screenshot gets the proportions of the main window shots
+WIDTH, HEIGHT = 1180, 760
+
+
 def compose(base, overlay, out, x, y):
     subprocess.run(["magick", str(base), str(overlay), "-geometry", f"+{x}+{y}", "-composite",
                     str(out)], check=True)
 
 
+def fit_ratio(path, trim=False):
+    """Trims transparent margins (optional), then pads the image with transparency
+    at the bottom or the sides so that width:height == WIDTH:HEIGHT."""
+    if trim:
+        subprocess.run(["magick", str(path), "-trim", "+repage", str(path)], check=True)
+    size = subprocess.run(["magick", "identify", "-format", "%w %h", str(path)],
+                          capture_output=True, text=True, check=True).stdout.split()
+    w, h = int(size[0]), int(size[1])
+    g = math.gcd(WIDTH, HEIGHT)
+    rw, rh = WIDTH // g, HEIGHT // g  # 59:38 — exact proportions need multiples of these
+    k = max(math.ceil(w / rw), math.ceil(h / rh))
+    new_w, new_h = k * rw, k * rh
+    gravity = "north" if w * HEIGHT >= h * WIDTH else "center"
+    if (new_w, new_h) != (w, h):
+        subprocess.run(["magick", str(path), "-background", "none", "-gravity", gravity,
+                        "-extent", f"{new_w}x{new_h}", str(path)], check=True)
+
+
 def shots(app):
     OUT.mkdir(parents=True, exist_ok=True)
     win = app._window()
-    win.set_default_size(1180, 760)
+    win.set_default_size(WIDTH, HEIGHT)
     win.present()
     pump(800)
     style = Adw.StyleManager.get_default()
@@ -142,6 +165,7 @@ def shots(app):
     def shot(name, target=None, wait=600):
         pump(wait)
         save_png(target or win, str(OUT / name))
+        fit_ratio(OUT / name)
         print("saved", name)
 
     style.set_color_scheme(Adw.ColorScheme.FORCE_DARK)
@@ -202,6 +226,7 @@ def shots(app):
     subprocess.run(["magick", str(tmp / "q.png"), "-background", "none", "-gravity", "north",
                     "-extent", "520x400", str(tmp / "qx.png")], check=True)
     compose(tmp / "qx.png", tmp / "p.png", OUT / "quick-add.png", 2, 88)
+    fit_ratio(OUT / "quick-add.png", trim=True)
     print("saved quick-add.png")
     q.close()
     shutil.rmtree(tmp, ignore_errors=True)
