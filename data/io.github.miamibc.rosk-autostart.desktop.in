@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Rosk
+Comment=Rosk background service: sync and reminders
+Exec=@BINDIR@/rosk --background
+Icon=io.github.miamibc.rosk
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3

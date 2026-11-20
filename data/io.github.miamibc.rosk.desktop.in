@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=Application
+Name=Rosk
+GenericName=Tasks and Notes
+Comment=A note you write down and cross out
+Comment[ru]=Заметка, которую написал и вычеркнул
+Exec=@BINDIR@/rosk
+Icon=io.github.miamibc.rosk
+Terminal=false
+Categories=Office;ProjectManagement;GTK;
+Keywords=todo;task;tasks;note;notes;keep;google;задачи;заметки;
+StartupNotify=true
+DBusActivatable=true
+Actions=quick-add;
+
+[Desktop Action quick-add]
+Name=Quick Add
+Name[ru]=Быстро добавить
+Exec=@BINDIR@/rosk --quick

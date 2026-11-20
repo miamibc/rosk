@@ -6,7 +6,7 @@ Rosk is a quick note you write down and then cross out. It is a task and note ma
 GNOME desktop, built for speed and brevity: getting a thought into your list takes a couple of
 seconds, and checking it off even less.
 
-> Status: design stage. The specification is ready; there is no code yet.
+> Status: first working version (0.1). Tasks sync with Google Tasks; Keep sync needs a one-time login in Preferences.
 
 ## What it does
 
@@ -24,7 +24,42 @@ seconds, and checking it off even less.
 
 ## Requirements
 
-GNOME 50 or newer, with a Google account added in Settings → Online Accounts.
+GNOME 48 or newer, with a Google account added in Settings → Online Accounts, and these
+packages (preinstalled on Ubuntu 26.04):
+
+```sh
+sudo apt install python3-gi python3-venv gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-goa-1.0 gir1.2-secret-1
+```
+
+## Install
+
+```sh
+make install      # into ~/.local, no root needed
+make uninstall    # removes the app, keeps your data in ~/.local/share/rosk
+```
+
+Rosk then runs in the background, its icon appears in the top bar and it starts with your
+session. On Wayland GNOME loads new Shell extensions only at login, so until you log out and
+back in Rosk shows a compact AppIndicator icon instead.
+
+## Use
+
+- **Super+Alt+R** or a click on the top-bar icon: type one line, press Enter. Shift+Enter keeps
+  the box open for the next one.
+- Quick syntax: `tomorrow`, `fri`, `12.12`, `in 3 days` (Russian works too: `завтра`, `в пт`,
+  `через неделю`), `#list` for the list, `n:` at the start for a note, and
+  `Trip: - tickets - hotel` for subtasks or checklist items.
+- Search tasks and notes right from the GNOME overview.
+- Google Keep: Preferences → Google Keep. Google has no public Keep API for personal accounts,
+  so Rosk uses the unofficial [gkeepapi](https://github.com/kiwiz/gkeepapi) library.
+
+## Develop
+
+```sh
+make venv   # .venv with gkeepapi and pytest, using the system PyGObject
+make test
+make run
+```
 
 ## Documentation
 

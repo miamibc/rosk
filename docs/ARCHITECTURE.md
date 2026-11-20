@@ -28,6 +28,11 @@
   через D-Bus службы. Если служба не запущена — D-Bus activation запускает её.
   Расширение не хранит данные и не ходит в сеть.
 - **Search provider** — `org.gnome.Shell.SearchProvider2`, реализуется службой.
+- **Запасной значок** — пока расширение Rosk не активно (сразу после установки на Wayland,
+  до перезахода, или если его выключили), служба показывает значок через StatusNotifierItem
+  (расширение Ubuntu AppIndicators): клик открывает окно быстрого ввода, меню — «Открыть Rosk»,
+  «Синхронизировать», «Выйти». Как только расширение Rosk активируется, значок скрывается
+  (сигнал `ExtensionStateChanged`).
 
 ## 2. Структура кода (предварительно)
 
@@ -127,9 +132,10 @@ history      (item_id, at, source, snapshot_json)  -- проигравшие в�
 - Поддерживаемые версии shell: 50+ (ESM-модули).
 - `PanelMenu.Button` с иконкой и счётчиком; popup с `St.Entry` и списком «Сегодня».
 - Горячая клавиша через `Main.wm.addKeybinding` (gschema расширения).
-- D-Bus прокси к `io.github.miamibc.rosk`: `QuickAdd(text) -> id`, `ParsePreview(text) -> chips`,
-  `ListDue() -> items`, `Complete(id)`, `Open(id)`, сигнал `Changed`.
-- Разбор быстрого ввода выполняет служба (единая реализация); превью чипов — через `ParsePreview`.
+- D-Bus интерфейс `io.github.miamibc.rosk.Service` на `/io/github/miamibc/rosk/Service`:
+  `QuickAdd(s) -> s`, `Preview(s) -> s(json)`, `Due() -> s(json)`, `Counts() -> s(json)`,
+  `Complete(s)`, `Open(s)`, `Sync()`, сигнал `Changed(s counts)`.
+- Разбор быстрого ввода выполняет служба (единая реализация); превью чипов — через `Preview`.
 
 ## 8. Безопасность
 

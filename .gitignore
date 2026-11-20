@@ -7,3 +7,5 @@ __pycache__/
 *.db
 .idea/
 .pytest_cache/
+build/
+dist/

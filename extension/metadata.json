@@ -1,0 +1,10 @@
+{
+  "uuid": "rosk@miamibc.github.io",
+  "name": "Rosk",
+  "description": "Quick capture and today's tasks for Rosk: a note you write down and cross out.",
+  "shell-version": ["48", "49", "50", "51"],
+  "url": "https://github.com/miamibc/rosk",
+  "settings-schema": "org.gnome.shell.extensions.rosk",
+  "gettext-domain": "rosk",
+  "version-name": "0.1.0"
+}

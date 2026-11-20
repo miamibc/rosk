@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.rosk" path="/org/gnome/shell/extensions/rosk/">
+    <key name="toggle-rosk" type="as">
+      <default><![CDATA[['<Super><Alt>r']]]></default>
+      <summary>Open quick capture</summary>
+    </key>
+    <key name="show-count" type="b">
+      <default>true</default>
+      <summary>Show the number of tasks due today next to the icon</summary>
+    </key>
+  </schema>
+</schemalist>

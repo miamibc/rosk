@@ -1,0 +1,813 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-20 15:59+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: rosk/app.py:26
+msgid "Open the quick-capture window"
+msgstr ""
+
+#: rosk/app.py:28
+msgid "Start without a window"
+msgstr ""
+
+#: rosk/app.py:30
+msgid "Print the version"
+msgstr ""
+
+#: rosk/app.py:169
+msgid "A note you write down and cross out."
+msgstr ""
+
+#: rosk/app.py:215
+msgid "Rosk · Today"
+msgstr ""
+
+#: rosk/app.py:216
+msgid "{} task for today"
+msgid_plural "{} tasks for today"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosk/app.py:218
+msgid "{} overdue"
+msgid_plural "{} overdue"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosk/app.py:224
+msgid "Open"
+msgstr ""
+
+#: rosk/core/dates.py:43
+msgctxt "month"
+msgid "Jan"
+msgstr ""
+
+#: rosk/core/dates.py:43
+msgctxt "month"
+msgid "Feb"
+msgstr ""
+
+#: rosk/core/dates.py:43
+msgctxt "month"
+msgid "Mar"
+msgstr ""
+
+#: rosk/core/dates.py:43
+msgctxt "month"
+msgid "Apr"
+msgstr ""
+
+#: rosk/core/dates.py:44
+msgctxt "month"
+msgid "May"
+msgstr ""
+
+#: rosk/core/dates.py:44
+msgctxt "month"
+msgid "Jun"
+msgstr ""
+
+#: rosk/core/dates.py:44
+msgctxt "month"
+msgid "Jul"
+msgstr ""
+
+#: rosk/core/dates.py:44
+msgctxt "month"
+msgid "Aug"
+msgstr ""
+
+#: rosk/core/dates.py:45
+msgctxt "month"
+msgid "Sep"
+msgstr ""
+
+#: rosk/core/dates.py:45
+msgctxt "month"
+msgid "Oct"
+msgstr ""
+
+#: rosk/core/dates.py:45
+msgctxt "month"
+msgid "Nov"
+msgstr ""
+
+#: rosk/core/dates.py:45
+msgctxt "month"
+msgid "Dec"
+msgstr ""
+
+#: rosk/core/dates.py:51
+msgctxt "weekday"
+msgid "Mon"
+msgstr ""
+
+#: rosk/core/dates.py:51
+msgctxt "weekday"
+msgid "Tue"
+msgstr ""
+
+#: rosk/core/dates.py:51
+msgctxt "weekday"
+msgid "Wed"
+msgstr ""
+
+#: rosk/core/dates.py:51
+msgctxt "weekday"
+msgid "Thu"
+msgstr ""
+
+#: rosk/core/dates.py:52
+msgctxt "weekday"
+msgid "Fri"
+msgstr ""
+
+#: rosk/core/dates.py:52
+msgctxt "weekday"
+msgid "Sat"
+msgstr ""
+
+#: rosk/core/dates.py:52
+msgctxt "weekday"
+msgid "Sun"
+msgstr ""
+
+#: rosk/core/dates.py:58
+msgid "Monday"
+msgstr ""
+
+#: rosk/core/dates.py:58
+msgid "Tuesday"
+msgstr ""
+
+#: rosk/core/dates.py:58
+msgid "Wednesday"
+msgstr ""
+
+#: rosk/core/dates.py:58
+msgid "Thursday"
+msgstr ""
+
+#: rosk/core/dates.py:59
+msgid "Friday"
+msgstr ""
+
+#: rosk/core/dates.py:59
+msgid "Saturday"
+msgstr ""
+
+#: rosk/core/dates.py:59
+msgid "Sunday"
+msgstr ""
+
+#: rosk/core/dates.py:79 rosk/ui/window.py:439
+msgid "Yesterday"
+msgstr ""
+
+#: rosk/core/dates.py:81 rosk/core/dates.py:94 rosk/ui/editor.py:318
+#: rosk/ui/window.py:18 rosk/ui/window.py:117 rosk/ui/window.py:197
+#: rosk/ui/window.py:327 rosk/ui/window.py:403 rosk/ui/window.py:437
+#: extension/extension.js:177
+msgid "Today"
+msgstr ""
+
+#: rosk/core/dates.py:83 rosk/core/dates.py:96 rosk/ui/editor.py:318
+msgid "Tomorrow"
+msgstr ""
+
+#: rosk/service/dbus.py:79 rosk/service/dbus.py:164 rosk/store/repo.py:312
+#: rosk/ui/editor.py:279 rosk/ui/widgets.py:61 rosk/ui/window.py:524
+#: rosk/ui/window.py:672
+msgid "Untitled"
+msgstr ""
+
+#: rosk/service/dbus.py:94 rosk/service/dbus.py:157 rosk/ui/editor.py:101
+#: rosk/ui/quick.py:57 rosk/ui/window.py:567
+msgid "Note"
+msgstr ""
+
+#: rosk/service/dbus.py:97 rosk/ui/quick.py:59 rosk/ui/window.py:569
+msgid "{} subtask"
+msgid_plural "{} subtasks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosk/service/dbus.py:155 rosk/ui/window.py:22 rosk/ui/window.py:643
+msgid "Completed"
+msgstr ""
+
+#: rosk/service/tray.py:110
+msgid "Quick Add…"
+msgstr ""
+
+#: rosk/service/tray.py:111 extension/extension.js:106
+msgid "Open Rosk"
+msgstr ""
+
+#: rosk/service/tray.py:113 rosk/ui/window.py:95
+msgid "Sync Now"
+msgstr ""
+
+#: rosk/service/tray.py:115 rosk/ui/window.py:101 rosk/ui/window.py:835
+msgid "Quit"
+msgstr ""
+
+#: rosk/service/tray.py:191
+msgid "Rosk — {} due"
+msgstr ""
+
+#: rosk/store/repo.py:67
+msgid "My Tasks"
+msgstr ""
+
+#: rosk/sync/manager.py:121
+msgid "Online Accounts are not available: {}"
+msgstr ""
+
+#: rosk/sync/manager.py:123
+msgid "Add a Google account in Settings → Online Accounts"
+msgstr ""
+
+#: rosk/sync/manager.py:127
+msgid "Enable “Calendar” for {} in Online Accounts to sync tasks"
+msgstr ""
+
+#: rosk/sync/manager.py:136
+msgid "No connection. Changes will be sent later."
+msgstr ""
+
+#: rosk/sync/manager.py:142
+msgid "Some changes were rejected by Google: {}"
+msgstr ""
+
+#: rosk/sync/manager.py:159
+msgid "Keep is not connected"
+msgstr ""
+
+#: rosk/sync/manager.py:175
+msgid "Keep sync failed: {}"
+msgstr ""
+
+#: rosk/ui/editor.py:65
+msgid "Close"
+msgstr ""
+
+#: rosk/ui/editor.py:71
+msgid "More"
+msgstr ""
+
+#: rosk/ui/editor.py:98 rosk/ui/editor.py:205
+msgid "Task"
+msgstr ""
+
+#: rosk/ui/editor.py:174
+msgid "Open in Google Tasks"
+msgstr ""
+
+#: rosk/ui/editor.py:175
+msgid "Convert to Note"
+msgstr ""
+
+#: rosk/ui/editor.py:175
+msgid "Convert to Task"
+msgstr ""
+
+#: rosk/ui/editor.py:177 rosk/ui/window.py:782
+msgid "Delete"
+msgstr ""
+
+#: rosk/ui/editor.py:207
+msgid "Add details"
+msgstr ""
+
+#: rosk/ui/editor.py:210
+msgid "Due date"
+msgstr ""
+
+#: rosk/ui/editor.py:216
+msgid "Pick a date"
+msgstr ""
+
+#: rosk/ui/editor.py:222
+msgid "Remove date"
+msgstr ""
+
+#: rosk/ui/editor.py:232
+msgid "List"
+msgstr ""
+
+#: rosk/ui/editor.py:241
+msgid "Subtask of"
+msgstr ""
+
+#: rosk/ui/editor.py:248 rosk/ui/widgets.py:81
+msgid "Subtasks"
+msgstr ""
+
+#: rosk/ui/editor.py:257
+msgid "Source"
+msgstr ""
+
+#: rosk/ui/editor.py:269
+msgid "Completed {}"
+msgstr ""
+
+#: rosk/ui/editor.py:289
+msgid "Add subtask"
+msgstr ""
+
+#: rosk/ui/editor.py:307
+msgid "No date"
+msgstr ""
+
+#: rosk/ui/editor.py:319
+msgid "Next week"
+msgstr ""
+
+#: rosk/ui/editor.py:345
+msgid "Title"
+msgstr ""
+
+#: rosk/ui/editor.py:354
+msgid "Write a note…"
+msgstr ""
+
+#: rosk/ui/editor.py:357
+msgid "Checklist"
+msgstr ""
+
+#: rosk/ui/editor.py:361 rosk/ui/window.py:172
+msgid "Pinned"
+msgstr ""
+
+#: rosk/ui/editor.py:365
+msgid "Archived"
+msgstr ""
+
+#: rosk/ui/editor.py:372
+msgid "Color"
+msgstr ""
+
+#: rosk/ui/editor.py:392 rosk/ui/window.py:263
+msgid "Labels"
+msgstr ""
+
+#: rosk/ui/editor.py:398
+msgid "New label"
+msgstr ""
+
+#: rosk/ui/editor.py:452
+msgid "Remove"
+msgstr ""
+
+#: rosk/ui/editor.py:458
+msgid "Add item"
+msgstr ""
+
+#: rosk/ui/prefs.py:9
+msgid "Follow System"
+msgstr ""
+
+#: rosk/ui/prefs.py:9
+msgid "Light"
+msgstr ""
+
+#: rosk/ui/prefs.py:9
+msgid "Dark"
+msgstr ""
+
+#: rosk/ui/prefs.py:20 rosk/ui/window.py:98 rosk/ui/window.py:834
+msgid "Preferences"
+msgstr ""
+
+#: rosk/ui/prefs.py:24
+msgid "General"
+msgstr ""
+
+#: rosk/ui/prefs.py:30
+msgid "Google Account"
+msgstr ""
+
+#: rosk/ui/prefs.py:31
+msgid "Tasks sync through GNOME Online Accounts."
+msgstr ""
+
+#: rosk/ui/prefs.py:38
+msgid "Account"
+msgstr ""
+
+#: rosk/ui/prefs.py:46
+msgid "No Google account"
+msgstr ""
+
+#: rosk/ui/prefs.py:47
+msgid "Add one in Settings → Online Accounts"
+msgstr ""
+
+#: rosk/ui/prefs.py:48
+msgid "Open Online Accounts"
+msgstr ""
+
+#: rosk/ui/prefs.py:56
+msgid "Tasks"
+msgstr ""
+
+#: rosk/ui/prefs.py:60
+msgid "Default list"
+msgstr ""
+
+#: rosk/ui/prefs.py:61
+msgid "Quick capture adds tasks here"
+msgstr ""
+
+#: rosk/ui/prefs.py:71
+msgid "Google Keep"
+msgstr ""
+
+#: rosk/ui/prefs.py:76
+msgid "Notifications"
+msgstr ""
+
+#: rosk/ui/prefs.py:77
+msgid "Morning summary"
+msgstr ""
+
+#: rosk/ui/prefs.py:78
+msgid "A notification with today’s and overdue tasks"
+msgstr ""
+
+#: rosk/ui/prefs.py:84
+msgid "Hour"
+msgstr ""
+
+#: rosk/ui/prefs.py:87
+msgid "Minute"
+msgstr ""
+
+#: rosk/ui/prefs.py:101
+msgid "Appearance"
+msgstr ""
+
+#: rosk/ui/prefs.py:103
+msgid "Style"
+msgstr ""
+
+#: rosk/ui/prefs.py:139
+msgid "Connected"
+msgstr ""
+
+#: rosk/ui/prefs.py:141
+msgid "Problem"
+msgstr ""
+
+#: rosk/ui/prefs.py:145
+msgid "Disconnect"
+msgstr ""
+
+#: rosk/ui/prefs.py:152
+msgid ""
+"Google has no public Keep API for personal accounts, so Rosk uses the "
+"unofficial gkeepapi library. It may stop working if Google changes Keep. "
+"Tasks are not affected."
+msgstr ""
+
+#: rosk/ui/prefs.py:155
+msgid "Email"
+msgstr ""
+
+#: rosk/ui/prefs.py:158
+msgid "1. Sign in at accounts.google.com/EmbeddedSetup"
+msgstr ""
+
+#: rosk/ui/prefs.py:159
+msgid ""
+"2. Accept, then copy the “oauth_token” cookie (Developer Tools → Storage → "
+"Cookies)"
+msgstr ""
+
+#: rosk/ui/prefs.py:165
+msgid "oauth_token cookie"
+msgstr ""
+
+#: rosk/ui/prefs.py:167 rosk/ui/prefs.py:195
+msgid "Connect Keep"
+msgstr ""
+
+#: rosk/ui/prefs.py:177
+msgid "Enter the email and the oauth_token cookie"
+msgstr ""
+
+#: rosk/ui/prefs.py:180
+msgid "Connecting…"
+msgstr ""
+
+#: rosk/ui/prefs.py:196
+msgid "Keep login failed: {}"
+msgstr ""
+
+#: rosk/ui/prefs.py:201
+msgid "Keep connected"
+msgstr ""
+
+#: rosk/ui/quick.py:12
+msgid "Quick Add"
+msgstr ""
+
+#: rosk/ui/quick.py:20
+msgid "Add a task…  tomorrow  #list   (n: for a note)"
+msgstr ""
+
+#: rosk/ui/quick.py:27
+msgid "Enter to save · Shift+Enter to add more · Esc to close"
+msgstr ""
+
+#: rosk/ui/quick.py:60 rosk/ui/window.py:572
+msgid "Click to keep as text"
+msgstr ""
+
+#: rosk/ui/widgets.py:55
+msgid "Mark as done"
+msgstr ""
+
+#: rosk/ui/widgets.py:87
+msgid "Open source"
+msgstr ""
+
+#: rosk/ui/widgets.py:92
+msgid "Assigned"
+msgstr ""
+
+#: rosk/ui/widgets.py:160
+msgid "+ {} more"
+msgstr ""
+
+#: rosk/ui/window.py:19
+msgid "Upcoming"
+msgstr ""
+
+#: rosk/ui/window.py:20
+msgid "All Tasks"
+msgstr ""
+
+#: rosk/ui/window.py:21
+msgid "Notes"
+msgstr ""
+
+#: rosk/ui/window.py:94 rosk/ui/window.py:255 rosk/ui/window.py:769
+msgid "New List"
+msgstr ""
+
+#: rosk/ui/window.py:99 rosk/ui/window.py:825
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: rosk/ui/window.py:100
+msgid "About Rosk"
+msgstr ""
+
+#: rosk/ui/window.py:104
+msgid "Main Menu"
+msgstr ""
+
+#: rosk/ui/window.py:120 rosk/ui/window.py:338 rosk/ui/window.py:831
+msgid "Search"
+msgstr ""
+
+#: rosk/ui/window.py:122
+msgid "Sync"
+msgstr ""
+
+#: rosk/ui/window.py:129
+msgid "Search tasks and notes"
+msgstr ""
+
+#: rosk/ui/window.py:175
+msgid "Others"
+msgstr ""
+
+#: rosk/ui/window.py:255
+msgid "Lists"
+msgstr ""
+
+#: rosk/ui/window.py:268 rosk/ui/window.py:322
+msgid "Archive"
+msgstr ""
+
+#: rosk/ui/window.py:281
+msgid "Rename…"
+msgstr ""
+
+#: rosk/ui/window.py:283
+msgid "Set as Default"
+msgstr ""
+
+#: rosk/ui/window.py:284
+msgid "Delete Completed"
+msgstr ""
+
+#: rosk/ui/window.py:285
+msgid "Delete…"
+msgstr ""
+
+#: rosk/ui/window.py:298
+msgid "Default list changed"
+msgstr ""
+
+#: rosk/ui/window.py:342
+msgid "Take a note…  #label"
+msgstr ""
+
+#: rosk/ui/window.py:343
+msgid "Add a task…  tomorrow  #list  : - subtask"
+msgstr ""
+
+#: rosk/ui/window.py:398
+msgid "Overdue"
+msgstr ""
+
+#: rosk/ui/window.py:406
+msgid "All done for today"
+msgstr ""
+
+#: rosk/ui/window.py:406
+msgid "Nothing is due. Add a task above or enjoy the day."
+msgstr ""
+
+#: rosk/ui/window.py:414
+msgid "Later"
+msgstr ""
+
+#: rosk/ui/window.py:419
+msgid "Nothing planned"
+msgstr ""
+
+#: rosk/ui/window.py:419
+msgid "Tasks with a future due date appear here."
+msgstr ""
+
+#: rosk/ui/window.py:429
+msgid "No tasks"
+msgstr ""
+
+#: rosk/ui/window.py:429
+msgid "Add your first task above."
+msgstr ""
+
+#: rosk/ui/window.py:435
+msgid "Earlier"
+msgstr ""
+
+#: rosk/ui/window.py:446
+msgid "Nothing completed yet"
+msgstr ""
+
+#: rosk/ui/window.py:446
+msgid "Crossed-out tasks appear here."
+msgstr ""
+
+#: rosk/ui/window.py:457
+msgid "Hide completed ({})"
+msgstr ""
+
+#: rosk/ui/window.py:458
+msgid "Show completed ({})"
+msgstr ""
+
+#: rosk/ui/window.py:465
+msgid "No tasks in this list"
+msgstr ""
+
+#: rosk/ui/window.py:465
+msgid "Add one above."
+msgstr ""
+
+#: rosk/ui/window.py:503
+msgid "Archive is empty"
+msgstr ""
+
+#: rosk/ui/window.py:505
+msgid "No notes"
+msgstr ""
+
+#: rosk/ui/window.py:506
+msgid "Notes you add here sync with Google Keep."
+msgstr ""
+
+#: rosk/ui/window.py:531
+msgid "Nothing found"
+msgstr ""
+
+#: rosk/ui/window.py:606
+msgid "Note added"
+msgstr ""
+
+#: rosk/ui/window.py:643 rosk/ui/window.py:673
+msgid "Undo"
+msgstr ""
+
+#: rosk/ui/window.py:672
+msgid "Deleted “{}”"
+msgstr ""
+
+#: rosk/ui/window.py:741
+msgid "Moved to “{}”"
+msgstr ""
+
+#: rosk/ui/window.py:751 rosk/ui/window.py:781
+msgid "Cancel"
+msgstr ""
+
+#: rosk/ui/window.py:769
+msgid "Create"
+msgstr ""
+
+#: rosk/ui/window.py:773
+msgid "Rename"
+msgstr ""
+
+#: rosk/ui/window.py:778
+msgid "All tasks in this list will be deleted from Google Tasks too."
+msgstr ""
+
+#: rosk/ui/window.py:779
+msgid "Notes keep their content, only the label is removed."
+msgstr ""
+
+#: rosk/ui/window.py:780
+msgid "Delete “{}”?"
+msgstr ""
+
+#: rosk/ui/window.py:801
+msgid "Syncing…"
+msgstr ""
+
+#: rosk/ui/window.py:807
+msgid "Synced"
+msgstr ""
+
+#: rosk/ui/window.py:809
+msgid "{} change waiting to be sent"
+msgid_plural "{} changes waiting to be sent"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosk/ui/window.py:830
+msgid "Add a task"
+msgstr ""
+
+#: rosk/ui/window.py:830
+msgid "Add a note"
+msgstr ""
+
+#: rosk/ui/window.py:831
+msgid "Smart views"
+msgstr ""
+
+#: rosk/ui/window.py:832
+msgid "Mark selected task as done"
+msgstr ""
+
+#: rosk/ui/window.py:833
+msgid "Delete selected item"
+msgstr ""
+
+#: rosk/ui/window.py:833
+msgid "Open selected item"
+msgstr ""
+
+#: rosk/ui/window.py:834
+msgid "Sync now"
+msgstr ""
+
+#: rosk/ui/window.py:835
+msgid "Close window"
+msgstr ""
+
+#: extension/extension.js:77
+msgid "Add a task…  tomorrow  #list   (n: note)"
+msgstr ""
+
+#: extension/extension.js:182
+msgid "Rosk is starting…"
+msgstr ""
+
+#: extension/extension.js:182
+msgid "Nothing due. Enjoy the day."
+msgstr ""
