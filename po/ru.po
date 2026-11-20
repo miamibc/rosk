@@ -2,12 +2,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rosk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-20 16:39+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: rosk/app.py:26
 msgid "Open the quick-capture window"
@@ -170,14 +172,14 @@ msgstr "Суббота"
 msgid "Sunday"
 msgstr "Воскресенье"
 
-#: rosk/core/dates.py:79 rosk/ui/window.py:439
+#: rosk/core/dates.py:79 rosk/ui/window.py:444
 msgid "Yesterday"
 msgstr "Вчера"
 
 #: rosk/core/dates.py:81 rosk/core/dates.py:94 rosk/ui/editor.py:318
-#: rosk/ui/window.py:18 rosk/ui/window.py:117 rosk/ui/window.py:197
-#: rosk/ui/window.py:327 rosk/ui/window.py:403 rosk/ui/window.py:437
-#: extension/extension.js:177
+#: rosk/ui/window.py:19 rosk/ui/window.py:118 rosk/ui/window.py:202
+#: rosk/ui/window.py:332 rosk/ui/window.py:408 rosk/ui/window.py:442
+#: extension/extension.js:185
 msgid "Today"
 msgstr "Сегодня"
 
@@ -185,25 +187,29 @@ msgstr "Сегодня"
 msgid "Tomorrow"
 msgstr "Завтра"
 
-#: rosk/service/dbus.py:79 rosk/service/dbus.py:164 rosk/store/repo.py:312
-#: rosk/ui/editor.py:279 rosk/ui/widgets.py:61 rosk/ui/window.py:524
-#: rosk/ui/window.py:672
+#: rosk/service/dbus.py:80 rosk/service/dbus.py:191 rosk/store/repo.py:321
+#: rosk/ui/editor.py:279 rosk/ui/widgets.py:61 rosk/ui/window.py:529
+#: rosk/ui/window.py:684
 msgid "Untitled"
 msgstr "Без названия"
 
-#: rosk/service/dbus.py:94 rosk/service/dbus.py:157 rosk/ui/editor.py:101
-#: rosk/ui/quick.py:57 rosk/ui/window.py:567
+#: rosk/service/dbus.py:96 rosk/ui/quick.py:69 rosk/ui/window.py:577
+msgid "New: {}"
+msgstr "Новый: {}"
+
+#: rosk/service/dbus.py:98 rosk/service/dbus.py:184 rosk/ui/editor.py:101
+#: rosk/ui/quick.py:71 rosk/ui/window.py:579
 msgid "Note"
 msgstr "Заметка"
 
-#: rosk/service/dbus.py:97 rosk/ui/quick.py:59 rosk/ui/window.py:569
+#: rosk/service/dbus.py:101 rosk/ui/quick.py:73 rosk/ui/window.py:581
 msgid "{} subtask"
 msgid_plural "{} subtasks"
 msgstr[0] "{} подзадача"
 msgstr[1] "{} подзадачи"
 msgstr[2] "{} подзадач"
 
-#: rosk/service/dbus.py:155 rosk/ui/window.py:22 rosk/ui/window.py:643
+#: rosk/service/dbus.py:182 rosk/ui/window.py:23 rosk/ui/window.py:655
 msgid "Completed"
 msgstr "Выполнено"
 
@@ -211,15 +217,15 @@ msgstr "Выполнено"
 msgid "Quick Add…"
 msgstr "Быстро добавить…"
 
-#: rosk/service/tray.py:111 extension/extension.js:106
+#: rosk/service/tray.py:111 extension/extension.js:114
 msgid "Open Rosk"
 msgstr "Открыть Rosk"
 
-#: rosk/service/tray.py:113 rosk/ui/window.py:95
+#: rosk/service/tray.py:113 rosk/ui/window.py:96
 msgid "Sync Now"
 msgstr "Синхронизировать"
 
-#: rosk/service/tray.py:115 rosk/ui/window.py:101 rosk/ui/window.py:835
+#: rosk/service/tray.py:115 rosk/ui/window.py:102 rosk/ui/window.py:847
 msgid "Quit"
 msgstr "Выйти"
 
@@ -241,7 +247,9 @@ msgstr "Добавьте аккаунт Google в Настройках → Се�
 
 #: rosk/sync/manager.py:127
 msgid "Enable “Calendar” for {} in Online Accounts to sync tasks"
-msgstr "Включите «Календарь» для {} в сетевых учётных записях, чтобы синхронизировать задачи"
+msgstr ""
+"Включите «Календарь» для {} в сетевых учётных записях, чтобы "
+"синхронизировать задачи"
 
 #: rosk/sync/manager.py:136
 msgid "No connection. Changes will be sent later."
@@ -283,7 +291,7 @@ msgstr "Превратить в заметку"
 msgid "Convert to Task"
 msgstr "Превратить в задачу"
 
-#: rosk/ui/editor.py:177 rosk/ui/window.py:782
+#: rosk/ui/editor.py:177 rosk/ui/window.py:794
 msgid "Delete"
 msgstr "Удалить"
 
@@ -347,7 +355,7 @@ msgstr "Текст заметки…"
 msgid "Checklist"
 msgstr "Список с флажками"
 
-#: rosk/ui/editor.py:361 rosk/ui/window.py:172
+#: rosk/ui/editor.py:361 rosk/ui/window.py:177
 msgid "Pinned"
 msgstr "Закреплена"
 
@@ -359,7 +367,7 @@ msgstr "В архиве"
 msgid "Color"
 msgstr "Цвет"
 
-#: rosk/ui/editor.py:392 rosk/ui/window.py:263
+#: rosk/ui/editor.py:392 rosk/ui/window.py:268
 msgid "Labels"
 msgstr "Метки"
 
@@ -387,7 +395,7 @@ msgstr "Светлая"
 msgid "Dark"
 msgstr "Тёмная"
 
-#: rosk/ui/prefs.py:20 rosk/ui/window.py:98 rosk/ui/window.py:834
+#: rosk/ui/prefs.py:20 rosk/ui/window.py:99 rosk/ui/window.py:846
 msgid "Preferences"
 msgstr "Настройки"
 
@@ -476,8 +484,14 @@ msgid "Disconnect"
 msgstr "Отключить"
 
 #: rosk/ui/prefs.py:152
-msgid "Google has no public Keep API for personal accounts, so Rosk uses the unofficial gkeepapi library. It may stop working if Google changes Keep. Tasks are not affected."
-msgstr "У Google нет публичного API Keep для личных аккаунтов, поэтому Rosk использует неофициальную библиотеку gkeepapi. Она может перестать работать, если Google изменит Keep. На задачи это не влияет."
+msgid ""
+"Google has no public Keep API for personal accounts, so Rosk uses the "
+"unofficial gkeepapi library. It may stop working if Google changes Keep. "
+"Tasks are not affected."
+msgstr ""
+"У Google нет публичного API Keep для личных аккаунтов, поэтому Rosk "
+"использует неофициальную библиотеку gkeepapi. Она может перестать работать, "
+"если Google изменит Keep. На задачи это не влияет."
 
 #: rosk/ui/prefs.py:155
 msgid "Email"
@@ -488,8 +502,12 @@ msgid "1. Sign in at accounts.google.com/EmbeddedSetup"
 msgstr "1. Войдите на accounts.google.com/EmbeddedSetup"
 
 #: rosk/ui/prefs.py:159
-msgid "2. Accept, then copy the “oauth_token” cookie (Developer Tools → Storage → Cookies)"
-msgstr "2. Согласитесь с условиями и скопируйте cookie «oauth_token» (Инструменты разработчика → Хранилище → Cookies)"
+msgid ""
+"2. Accept, then copy the “oauth_token” cookie (Developer Tools → Storage → "
+"Cookies)"
+msgstr ""
+"2. Согласитесь с условиями и скопируйте cookie «oauth_token» (Инструменты "
+"разработчика → Хранилище → Cookies)"
 
 #: rosk/ui/prefs.py:165
 msgid "oauth_token cookie"
@@ -515,19 +533,19 @@ msgstr "Не удалось войти в Keep: {}"
 msgid "Keep connected"
 msgstr "Keep подключён"
 
-#: rosk/ui/quick.py:12
+#: rosk/ui/quick.py:13
 msgid "Quick Add"
 msgstr "Быстрый ввод"
 
-#: rosk/ui/quick.py:20
+#: rosk/ui/quick.py:21
 msgid "Add a task…  tomorrow  #list   (n: for a note)"
 msgstr "Задача…  завтра  #список   (n: — заметка)"
 
-#: rosk/ui/quick.py:27
+#: rosk/ui/quick.py:28
 msgid "Enter to save · Shift+Enter to add more · Esc to close"
 msgstr "Enter — сохранить · Shift+Enter — добавить ещё · Esc — закрыть"
 
-#: rosk/ui/quick.py:60 rosk/ui/window.py:572
+#: rosk/ui/quick.py:74 rosk/ui/window.py:584
 msgid "Click to keep as text"
 msgstr "Нажмите, чтобы оставить текстом"
 
@@ -547,257 +565,257 @@ msgstr "Назначена"
 msgid "+ {} more"
 msgstr "и ещё {}"
 
-#: rosk/ui/window.py:19
+#: rosk/ui/window.py:20
 msgid "Upcoming"
 msgstr "Предстоящие"
 
-#: rosk/ui/window.py:20
+#: rosk/ui/window.py:21
 msgid "All Tasks"
 msgstr "Все задачи"
 
-#: rosk/ui/window.py:21
+#: rosk/ui/window.py:22
 msgid "Notes"
 msgstr "Заметки"
 
-#: rosk/ui/window.py:94 rosk/ui/window.py:255 rosk/ui/window.py:769
+#: rosk/ui/window.py:95 rosk/ui/window.py:260 rosk/ui/window.py:781
 msgid "New List"
 msgstr "Новый список"
 
-#: rosk/ui/window.py:99 rosk/ui/window.py:825
+#: rosk/ui/window.py:100 rosk/ui/window.py:837
 msgid "Keyboard Shortcuts"
 msgstr "Комбинации клавиш"
 
-#: rosk/ui/window.py:100
+#: rosk/ui/window.py:101
 msgid "About Rosk"
 msgstr "О Rosk"
 
-#: rosk/ui/window.py:104
+#: rosk/ui/window.py:105
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: rosk/ui/window.py:120 rosk/ui/window.py:338 rosk/ui/window.py:831
+#: rosk/ui/window.py:121 rosk/ui/window.py:343 rosk/ui/window.py:843
 msgid "Search"
 msgstr "Поиск"
 
-#: rosk/ui/window.py:122
+#: rosk/ui/window.py:123
 msgid "Sync"
 msgstr "Синхронизация"
 
-#: rosk/ui/window.py:129
+#: rosk/ui/window.py:130
 msgid "Search tasks and notes"
 msgstr "Поиск задач и заметок"
 
-#: rosk/ui/window.py:175
+#: rosk/ui/window.py:180
 msgid "Others"
 msgstr "Остальные"
 
-#: rosk/ui/window.py:255
+#: rosk/ui/window.py:260
 msgid "Lists"
 msgstr "Списки"
 
-#: rosk/ui/window.py:268 rosk/ui/window.py:322
+#: rosk/ui/window.py:273 rosk/ui/window.py:327
 msgid "Archive"
 msgstr "Архив"
 
-#: rosk/ui/window.py:281
+#: rosk/ui/window.py:286
 msgid "Rename…"
 msgstr "Переименовать…"
 
-#: rosk/ui/window.py:283
+#: rosk/ui/window.py:288
 msgid "Set as Default"
 msgstr "Сделать основным"
 
-#: rosk/ui/window.py:284
+#: rosk/ui/window.py:289
 msgid "Delete Completed"
 msgstr "Удалить выполненные"
 
-#: rosk/ui/window.py:285
+#: rosk/ui/window.py:290
 msgid "Delete…"
 msgstr "Удалить…"
 
-#: rosk/ui/window.py:298
+#: rosk/ui/window.py:303
 msgid "Default list changed"
 msgstr "Основной список изменён"
 
-#: rosk/ui/window.py:342
+#: rosk/ui/window.py:347
 msgid "Take a note…  #label"
 msgstr "Заметка…  #метка"
 
-#: rosk/ui/window.py:343
+#: rosk/ui/window.py:348
 msgid "Add a task…  tomorrow  #list  : - subtask"
 msgstr "Задача…  завтра  #список  : - подзадача"
 
-#: rosk/ui/window.py:398
+#: rosk/ui/window.py:403
 msgid "Overdue"
 msgstr "Просрочено"
 
-#: rosk/ui/window.py:406
+#: rosk/ui/window.py:411
 msgid "All done for today"
 msgstr "На сегодня всё"
 
-#: rosk/ui/window.py:406
+#: rosk/ui/window.py:411
 msgid "Nothing is due. Add a task above or enjoy the day."
 msgstr "Сроков нет. Добавьте задачу выше или отдохните."
 
-#: rosk/ui/window.py:414
+#: rosk/ui/window.py:419
 msgid "Later"
 msgstr "Позже"
 
-#: rosk/ui/window.py:419
+#: rosk/ui/window.py:424
 msgid "Nothing planned"
 msgstr "Ничего не запланировано"
 
-#: rosk/ui/window.py:419
+#: rosk/ui/window.py:424
 msgid "Tasks with a future due date appear here."
 msgstr "Здесь будут задачи со сроком в будущем."
 
-#: rosk/ui/window.py:429
+#: rosk/ui/window.py:434
 msgid "No tasks"
 msgstr "Нет задач"
 
-#: rosk/ui/window.py:429
+#: rosk/ui/window.py:434
 msgid "Add your first task above."
 msgstr "Добавьте первую задачу выше."
 
-#: rosk/ui/window.py:435
+#: rosk/ui/window.py:440
 msgid "Earlier"
 msgstr "Раньше"
 
-#: rosk/ui/window.py:446
+#: rosk/ui/window.py:451
 msgid "Nothing completed yet"
 msgstr "Пока ничего не выполнено"
 
-#: rosk/ui/window.py:446
+#: rosk/ui/window.py:451
 msgid "Crossed-out tasks appear here."
 msgstr "Здесь будут вычеркнутые задачи."
 
-#: rosk/ui/window.py:457
+#: rosk/ui/window.py:462
 msgid "Hide completed ({})"
 msgstr "Скрыть выполненные ({})"
 
-#: rosk/ui/window.py:458
+#: rosk/ui/window.py:463
 msgid "Show completed ({})"
 msgstr "Показать выполненные ({})"
 
-#: rosk/ui/window.py:465
+#: rosk/ui/window.py:470
 msgid "No tasks in this list"
 msgstr "В этом списке нет задач"
 
-#: rosk/ui/window.py:465
+#: rosk/ui/window.py:470
 msgid "Add one above."
 msgstr "Добавьте выше."
 
-#: rosk/ui/window.py:503
+#: rosk/ui/window.py:508
 msgid "Archive is empty"
 msgstr "Архив пуст"
 
-#: rosk/ui/window.py:505
+#: rosk/ui/window.py:510
 msgid "No notes"
 msgstr "Нет заметок"
 
-#: rosk/ui/window.py:506
+#: rosk/ui/window.py:511
 msgid "Notes you add here sync with Google Keep."
 msgstr "Заметки отсюда синхронизируются с Google Keep."
 
-#: rosk/ui/window.py:531
+#: rosk/ui/window.py:536
 msgid "Nothing found"
 msgstr "Ничего не найдено"
 
-#: rosk/ui/window.py:606
+#: rosk/ui/window.py:618
 msgid "Note added"
 msgstr "Заметка добавлена"
 
-#: rosk/ui/window.py:643 rosk/ui/window.py:673
+#: rosk/ui/window.py:655 rosk/ui/window.py:685
 msgid "Undo"
 msgstr "Отменить"
 
-#: rosk/ui/window.py:672
+#: rosk/ui/window.py:684
 msgid "Deleted “{}”"
 msgstr "Удалено «{}»"
 
-#: rosk/ui/window.py:741
+#: rosk/ui/window.py:753
 msgid "Moved to “{}”"
 msgstr "Перенесено в «{}»"
 
-#: rosk/ui/window.py:751 rosk/ui/window.py:781
+#: rosk/ui/window.py:763 rosk/ui/window.py:793
 msgid "Cancel"
 msgstr "Отмена"
 
-#: rosk/ui/window.py:769
+#: rosk/ui/window.py:781
 msgid "Create"
 msgstr "Создать"
 
-#: rosk/ui/window.py:773
+#: rosk/ui/window.py:785
 msgid "Rename"
 msgstr "Переименовать"
 
-#: rosk/ui/window.py:778
+#: rosk/ui/window.py:790
 msgid "All tasks in this list will be deleted from Google Tasks too."
 msgstr "Все задачи этого списка будут удалены и из Google Tasks."
 
-#: rosk/ui/window.py:779
+#: rosk/ui/window.py:791
 msgid "Notes keep their content, only the label is removed."
 msgstr "Заметки сохранятся, удалится только метка."
 
-#: rosk/ui/window.py:780
+#: rosk/ui/window.py:792
 msgid "Delete “{}”?"
 msgstr "Удалить «{}»?"
 
-#: rosk/ui/window.py:801
+#: rosk/ui/window.py:813
 msgid "Syncing…"
 msgstr "Синхронизация…"
 
-#: rosk/ui/window.py:807
+#: rosk/ui/window.py:819
 msgid "Synced"
 msgstr "Синхронизировано"
 
-#: rosk/ui/window.py:809
+#: rosk/ui/window.py:821
 msgid "{} change waiting to be sent"
 msgid_plural "{} changes waiting to be sent"
 msgstr[0] "{} изменение ждёт отправки"
 msgstr[1] "{} изменения ждут отправки"
 msgstr[2] "{} изменений ждут отправки"
 
-#: rosk/ui/window.py:830
+#: rosk/ui/window.py:842
 msgid "Add a task"
 msgstr "Добавить задачу"
 
-#: rosk/ui/window.py:830
+#: rosk/ui/window.py:842
 msgid "Add a note"
 msgstr "Добавить заметку"
 
-#: rosk/ui/window.py:831
+#: rosk/ui/window.py:843
 msgid "Smart views"
 msgstr "Умные списки"
 
-#: rosk/ui/window.py:832
+#: rosk/ui/window.py:844
 msgid "Mark selected task as done"
 msgstr "Отметить выбранную задачу"
 
-#: rosk/ui/window.py:833
+#: rosk/ui/window.py:845
 msgid "Delete selected item"
 msgstr "Удалить выбранное"
 
-#: rosk/ui/window.py:833
+#: rosk/ui/window.py:845
 msgid "Open selected item"
 msgstr "Открыть выбранное"
 
-#: rosk/ui/window.py:834
+#: rosk/ui/window.py:846
 msgid "Sync now"
 msgstr "Синхронизировать"
 
-#: rosk/ui/window.py:835
+#: rosk/ui/window.py:847
 msgid "Close window"
 msgstr "Закрыть окно"
 
-#: extension/extension.js:77
+#: extension/extension.js:78
 msgid "Add a task…  tomorrow  #list   (n: note)"
 msgstr "Задача…  завтра  #список   (n: заметка)"
 
-#: extension/extension.js:182
+#: extension/extension.js:190
 msgid "Rosk is starting…"
 msgstr "Rosk запускается…"
 
-#: extension/extension.js:182
+#: extension/extension.js:190
 msgid "Nothing due. Enjoy the day."
 msgstr "Сроков нет. Хорошего дня."

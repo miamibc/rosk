@@ -158,11 +158,20 @@ class Repo:
         with self.store.tx():
             self.store.set_meta("default_list", cid)
 
+    def find_collection(self, kind, tag):
+        """Finds a list/label by a '#tag' written in quick capture (case, spaces and
+        underscores do not matter)."""
+        key = quickparse.tag_key(tag)
+        for col in self.store.collections(kind):
+            if quickparse.tag_key(col["title"]) == key:
+                return col
+        return None
+
     def ensure_collection(self, kind, title):
-        col = self.store.collection_by_title(kind, title)
+        col = self.find_collection(kind, title)
         if col:
             return col["id"]
-        return self.create_collection(kind, title)
+        return self.create_collection(kind, title.replace("_", " "))
 
     # ---------- items ----------
     def _siblings(self, collection_id, parent_id):

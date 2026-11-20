@@ -27,3 +27,7 @@
 .rosk-check:hover { background-color: rgba(255, 255, 255, 0.1); }
 .rosk-header { font-weight: bold; font-size: 0.9em; color: rgba(255, 255, 255, 0.6); }
 .rosk-empty { color: rgba(255, 255, 255, 0.5); }
+
+.rosk-suggestions { spacing: 6px; padding: 4px 2px 0 2px; }
+.rosk-suggestion { color: #ffffff; background-color: rgba(255, 255, 255, 0.14); }
+.rosk-suggestion:hover, .rosk-suggestion:focus { background-color: rgba(255, 255, 255, 0.24); }

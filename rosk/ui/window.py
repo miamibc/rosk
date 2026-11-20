@@ -8,6 +8,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from ..core import dates, quickparse
 from ..i18n import _, ngettext
 from ..sync import manager as sync_state
+from .complete import TagCompleter
 from .editor import Debounce, Editor
 from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state
 
@@ -147,6 +148,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.add_entry.connect("activate", self._on_add)
         self.add_entry.connect("changed", self._on_add_changed)
         add_box.append(self.add_entry)
+        self.completer = TagCompleter(self.add_entry, self._tag_names)
+        add_keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        add_keys.connect("key-pressed", lambda _c, kv, _k, _s: self.completer.handle_key(kv))
+        self.add_entry.add_controller(add_keys)
         self.preview = Gtk.Box(spacing=6)
         self.preview_revealer = Gtk.Revealer(child=self.preview,
                                              transition_type=Gtk.RevealerTransitionType.SLIDE_DOWN)
@@ -540,6 +545,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.present()
         self.add_entry.grab_focus()
 
+    def _tag_names(self):
+        notes = self._is_notes_view() or self._parse_add().kind == quickparse.NOTE
+        return [c["title"] for c in (self.repo.labels() if notes else self.repo.tasklists())]
+
     def _parse_add(self):
         text = self.add_entry.get_text()
         if self._is_notes_view() and text.strip():
@@ -562,7 +571,10 @@ class MainWindow(Adw.ApplicationWindow):
             if sp.kind == "date":
                 text, icon = dates.chip_text(sp.value), "alarm-symbolic"
             elif sp.kind == "list":
-                text, icon = sp.value, "tag-symbolic" if self._is_notes_view() or r.kind == "note" else "view-list-symbolic"
+                is_label = self._is_notes_view() or r.kind == "note"
+                icon = "tag-symbolic" if is_label else "view-list-symbolic"
+                col = self.repo.find_collection("label" if is_label else "tasklist", sp.value)
+                text = col["title"] if col else _("New: {}").format(sp.value.replace("_", " "))
             elif sp.kind == "note":
                 text, icon = _("Note"), "document-edit-symbolic"
             else:

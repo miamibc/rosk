@@ -16,6 +16,7 @@ SERVICE_XML = f"""
   <interface name="{SERVICE_IFACE}">
     <method name="QuickAdd"><arg type="s" name="text" direction="in"/><arg type="s" name="id" direction="out"/></method>
     <method name="Preview"><arg type="s" name="text" direction="in"/><arg type="s" name="json" direction="out"/></method>
+    <method name="Suggest"><arg type="s" name="text" direction="in"/><arg type="s" name="json" direction="out"/></method>
     <method name="Due"><arg type="s" name="json" direction="out"/></method>
     <method name="Counts"><arg type="s" name="json" direction="out"/></method>
     <method name="Complete"><arg type="s" name="id" direction="in"/></method>
@@ -89,13 +90,37 @@ class ServiceApi:
             if sp.kind == "date":
                 chips.append({"kind": "date", "text": dates.chip_text(sp.value)})
             elif sp.kind == "list":
-                chips.append({"kind": "list", "text": "#" + sp.value})
+                kind = "label" if r.kind == quickparse.NOTE else "tasklist"
+                col = self.repo.find_collection(kind, sp.value)
+                chips.append({"kind": "list", "text": col["title"] if col else
+                              _("New: {}").format(sp.value.replace("_", " "))})
             elif sp.kind == "note":
                 chips.append({"kind": "note", "text": _("Note")})
             else:
                 chips.append({"kind": "subtasks", "text": ngettext(
                     "{} subtask", "{} subtasks", len(sp.value)).format(len(sp.value))})
         return {"title": r.title, "chips": chips}
+
+    def suggest(self, text):
+        """Names for the #token at the end of `text`: [{"name", "text"}] where text is
+        the whole line with the token completed."""
+        import re
+
+        m = re.search(r"(?<![\w#])#([\w\-./]*)$", text)
+        if not m:
+            return []
+        prefix = m.group(1).replace("_", " ").lower()
+        kind = "label" if quickparse.parse(text).kind == quickparse.NOTE else "tasklist"
+        names = [c["title"] for c in self.repo.store.collections(kind)]
+        starts = [n for n in names if n.lower().startswith(prefix)]
+        contains = [n for n in names if prefix and prefix in n.lower() and n not in starts]
+        out = []
+        for name in (starts + contains)[:6]:
+            tag = quickparse.tag_for(name)
+            if tag.lower() == m.group(1).lower():
+                continue
+            out.append({"name": name, "text": text[:m.start()] + "#" + tag + " "})
+        return out
 
     # ---------- handlers ----------
     def _service_call(self, conn, sender, path, iface, method, params, invocation):
@@ -107,6 +132,8 @@ class ServiceApi:
                 invocation.return_value(GLib.Variant("(s)", (iid,)))
             elif method == "Preview":
                 invocation.return_value(GLib.Variant("(s)", (json.dumps(self.preview(args[0])),)))
+            elif method == "Suggest":
+                invocation.return_value(GLib.Variant("(s)", (json.dumps(self.suggest(args[0])),)))
             elif method == "Due":
                 invocation.return_value(GLib.Variant("(s)", (json.dumps(self.due()),)))
             elif method == "Counts":

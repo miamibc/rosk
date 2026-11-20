@@ -65,6 +65,16 @@ _NOTE_PREFIX = re.compile(r"^\s*(?:n|н|note|заметка)\s*:\s*", re.I)
 _LIST = re.compile(r"(?<![\w#])#([\w][\w\-./]*)", re.U)
 
 
+def tag_for(name):
+    """How a list or label name is written after '#': spaces become underscores."""
+    return re.sub(r"\s+", "_", name.strip())
+
+
+def tag_key(text):
+    """Normalized form for matching '#My_Tasks' / '#my tasks' / 'My Tasks'."""
+    return re.sub(r"[\s_]+", "", text).lower()
+
+
 @dataclass
 class Span:
     start: int

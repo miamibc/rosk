@@ -78,3 +78,15 @@ def test_chip_text():
     assert dates.chip_text("2026-11-25", TODAY) == "Wed"
     assert dates.chip_text("2026-12-12", TODAY) == "12 Dec"
     assert dates.chip_text("2027-01-05", TODAY) == "5 Jan 2027"
+
+
+def test_tag_with_spaces_resolves_existing_list(tmp_path):
+    from rosk.store.repo import Repo
+
+    repo = Repo(tmp_path / "r.db")
+    my = repo.create_collection("tasklist", "My Tasks")
+    assert qp.tag_for("My Tasks") == "My_Tasks"
+    iid = repo.quick_add("call #my_tasks")
+    assert repo.item(iid)["collection_id"] == my
+    iid = repo.quick_add("call #New_List")
+    assert repo.store.collection(repo.item(iid)["collection_id"])["title"] == "New List"

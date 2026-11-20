@@ -21,6 +21,7 @@ const IFACE = `
   <interface name="io.github.miamibc.rosk.Service">
     <method name="QuickAdd"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="Preview"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+    <method name="Suggest"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="Due"><arg type="s" direction="out"/></method>
     <method name="Counts"><arg type="s" direction="out"/></method>
     <method name="Complete"><arg type="s" direction="in"/></method>
@@ -83,6 +84,9 @@ class RoskIndicator extends PanelMenu.Button {
         column.add_child(this._entry);
         this._chips = new St.BoxLayout({style_class: 'rosk-chips', visible: false});
         column.add_child(this._chips);
+        this._suggestions = new St.BoxLayout({style_class: 'rosk-suggestions', visible: false});
+        column.add_child(this._suggestions);
+        this._suggested = [];
         entryItem.add_child(column);
         this.menu.addMenuItem(entryItem);
 
@@ -91,6 +95,10 @@ class RoskIndicator extends PanelMenu.Button {
         text.connect('key-press-event', (_actor, event) => {
             const key = event.get_key_symbol();
             const shift = (event.get_state() & Clutter.ModifierType.SHIFT_MASK) !== 0;
+            if (key === Clutter.KEY_Tab && this._suggested.length > 0) {
+                this._acceptSuggestion(this._suggested[0]);
+                return Clutter.EVENT_STOP;
+            }
             if ((key === Clutter.KEY_Return || key === Clutter.KEY_KP_Enter) && shift) {
                 this._add(true);
                 return Clutter.EVENT_STOP;
@@ -234,9 +242,39 @@ class RoskIndicator extends PanelMenu.Button {
         });
     }
 
+    _acceptSuggestion(text) {
+        this._entry.set_text(text);
+        this._entry.clutter_text.set_cursor_position(-1);
+        this._entry.clutter_text.set_selection_bound(-1);
+        global.stage.set_key_focus(this._entry);
+    }
+
+    async _suggest(text) {
+        const json = await this._call('Suggest', text);
+        if (this._entry.get_text() !== text)
+            return;
+        this._suggestions.destroy_all_children();
+        let items = [];
+        try {
+            items = JSON.parse(json ?? '[]');
+        } catch {}
+        this._suggested = items.map(i => i.text);
+        for (const item of items) {
+            const button = new St.Button({
+                label: item.name,
+                style_class: 'rosk-chip rosk-suggestion',
+                can_focus: true,
+            });
+            button.connect('clicked', () => this._acceptSuggestion(item.text));
+            this._suggestions.add_child(button);
+        }
+        this._suggestions.visible = items.length > 0;
+    }
+
     async _preview() {
         const text = this._entry.get_text();
         this._chips.destroy_all_children();
+        this._suggest(text);
         if (!text.trim()) {
             this._chips.visible = false;
             return;

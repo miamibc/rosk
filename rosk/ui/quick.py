@@ -4,6 +4,7 @@ from gi.repository import Adw, Gdk, Gtk
 
 from ..core import dates, quickparse
 from ..i18n import _, ngettext
+from .complete import TagCompleter
 from .widgets import chip
 
 
@@ -30,11 +31,20 @@ class QuickWindow(Adw.Window):
         box.append(self.hint)
         self.set_content(box)
 
+        self.completer = TagCompleter(self.entry, self._tag_names)
+
         keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         keys.connect("key-pressed", self._key)
         self.add_controller(keys)
 
+    def _tag_names(self):
+        is_note = quickparse.parse(self.entry.get_text()).kind == quickparse.NOTE
+        repo = self.app.repo
+        return [c["title"] for c in (repo.labels() if is_note else repo.tasklists())]
+
     def _key(self, _c, keyval, _code, state):
+        if self.completer.handle_key(keyval):
+            return True
         if keyval == Gdk.KEY_Escape:
             self.close()
             return True
@@ -54,7 +64,9 @@ class QuickWindow(Adw.Window):
             if sp.kind == "date":
                 text = dates.chip_text(sp.value)
             elif sp.kind == "list":
-                text = "#" + sp.value
+                kind = "label" if r.kind == quickparse.NOTE else "tasklist"
+                col = self.app.repo.find_collection(kind, sp.value)
+                text = col["title"] if col else _("New: {}").format(sp.value.replace("_", " "))
             elif sp.kind == "note":
                 text = _("Note")
             else:
