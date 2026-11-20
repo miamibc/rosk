@@ -39,9 +39,8 @@ def schedule_snapshot(app, win, path):
                     win.open_item(row.item_id, focus=False)
             elif name == "open-note":
                 for flow in (win.pinned_flow, win.others_flow):
-                    child = flow.get_child_at_index(0)
-                    if child is not None:
-                        win.open_item(child.item_id, focus=False)
+                    if flow.children:
+                        win.open_item(flow.children[0].item_id, focus=False)
                         break
             elif name == "search":
                 win.search_button.set_active(True)

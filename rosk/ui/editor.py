@@ -6,7 +6,7 @@ from datetime import date, timedelta
 from gi.repository import Adw, GLib, GObject, Gtk
 
 from ..core import dates
-from ..i18n import _
+from ..i18n import _, ngettext
 from .widgets import link_icon
 
 NOTE_COLORS = ["DEFAULT", "RED", "ORANGE", "YELLOW", "GREEN", "TEAL", "BLUE", "CERULEAN",
@@ -435,34 +435,62 @@ class Editor(Gtk.Box):
                              body="\n".join(e.get("text", "") for e in entries))
         GLib.idle_add(lambda: (self.load(self.item_id), False)[1])
 
+    def _check_row(self, idx, entry):
+        row = Gtk.ListBoxRow(activatable=False)
+        h = Gtk.Box(spacing=8, margin_start=10, margin_end=6, margin_top=4, margin_bottom=4)
+        cb = Gtk.CheckButton(active=bool(entry.get("checked")))
+        cb.connect("toggled", self._check_toggled, idx)
+        h.append(cb)
+        e = Gtk.Entry(text=entry.get("text", ""), hexpand=True)
+        e.add_css_class("flat")
+        if entry.get("checked"):
+            e.add_css_class("dim-label")
+        e.connect("changed", self._check_text, idx)
+        h.append(e)
+        rm = Gtk.Button(icon_name="edit-delete-symbolic", tooltip_text=_("Remove"))
+        rm.add_css_class("flat")
+        rm.connect("clicked", self._check_remove, idx)
+        h.append(rm)
+        row.set_child(h)
+        return row
+
     def _fill_checklist(self):
+        """Like Keep: unchecked items, the add row, then checked items folded away."""
         box = self.check_box
         while (child := box.get_first_child()) is not None:
             box.remove(child)
+        checked = []
         for idx, entry in enumerate(self.check_entries):
-            row = Gtk.ListBoxRow(activatable=False)
-            h = Gtk.Box(spacing=8, margin_start=10, margin_end=6, margin_top=4, margin_bottom=4)
-            cb = Gtk.CheckButton(active=bool(entry.get("checked")))
-            cb.connect("toggled", self._check_toggled, idx)
-            h.append(cb)
-            e = Gtk.Entry(text=entry.get("text", ""), hexpand=True)
-            e.add_css_class("flat")
-            e.connect("changed", self._check_text, idx)
-            h.append(e)
-            rm = Gtk.Button(icon_name="edit-delete-symbolic", tooltip_text=_("Remove"))
-            rm.add_css_class("flat")
-            rm.connect("clicked", self._check_remove, idx)
-            h.append(rm)
-            row.set_child(h)
-            box.append(row)
+            if entry.get("checked"):
+                checked.append((idx, entry))
+            else:
+                box.append(self._check_row(idx, entry))
         add = Adw.EntryRow(title=_("Add item"))
         add.connect("entry-activated", self._check_add)
         box.append(add)
         self._check_add_row = add
+        if checked:
+            show = getattr(self, "_show_checked", False)
+            toggle = Adw.ActionRow(
+                title=ngettext("{} checked item", "{} checked items", len(checked)).format(len(checked)),
+                activatable=True)
+            toggle.add_prefix(Gtk.Image.new_from_icon_name(
+                "pan-down-symbolic" if show else "pan-end-symbolic"))
+            toggle.connect("activated", self._toggle_checked)
+            box.append(toggle)
+            if show:
+                for idx, entry in checked:
+                    box.append(self._check_row(idx, entry))
+
+    def _toggle_checked(self, *_a):
+        self._show_checked = not getattr(self, "_show_checked", False)
+        self._fill_checklist()
 
     def _check_toggled(self, cb, idx):
         self.check_entries[idx]["checked"] = cb.get_active()
         self._save_checklist()
+        # move the item between the groups once the click animation has played
+        GLib.timeout_add(250, lambda: (self._fill_checklist(), False)[1])
 
     def _check_text(self, e, idx):
         self.check_entries[idx]["text"] = e.get_text()

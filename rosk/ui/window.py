@@ -9,6 +9,7 @@ from ..core import dates, quickparse
 from ..i18n import _, ngettext
 from ..sync import manager as sync_state
 from .complete import TagCompleter
+from .masonry import Masonry
 from .editor import Debounce, Editor
 from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state
 
@@ -177,14 +178,17 @@ class MainWindow(Adw.ApplicationWindow):
                             margin_end=12, margin_bottom=24, margin_top=6)
         self.pinned_label = Gtk.Label(label=_("Pinned"), xalign=0)
         self.pinned_label.add_css_class("group-header")
-        self.pinned_flow = self._flow()
+        self.pinned_flow = Masonry()
         self.others_label = Gtk.Label(label=_("Others"), xalign=0)
         self.others_label.add_css_class("group-header")
-        self.others_flow = self._flow()
+        self.others_flow = Masonry()
         for w in (self.pinned_label, self.pinned_flow, self.others_label, self.others_flow):
             notes_box.append(w)
         ns = Gtk.ScrolledWindow(hscrollbar_policy=Gtk.PolicyType.NEVER)
-        ns.set_child(Adw.Clamp(maximum_size=1100, child=notes_box))
+        ns.set_child(Adw.Clamp(maximum_size=1300, child=notes_box))
+        ns.get_vadjustment().connect("value-changed", self._notes_scrolled)
+        self._notes_pending = []
+        self._notes_key = None
         self.stack.add_named(ns, "notes")
         self.empty = Adw.Bin()
         self.stack.add_named(self.empty, "empty")
@@ -212,14 +216,6 @@ class MainWindow(Adw.ApplicationWindow):
         css.load_from_path(str(__import__("pathlib").Path(__file__).with_name("style.css")))
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css,
                                                   Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-
-    def _flow(self):
-        flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.SINGLE, homogeneous=True,
-                           min_children_per_line=2, max_children_per_line=4, column_spacing=12,
-                           row_spacing=12, valign=Gtk.Align.START,
-                           activate_on_single_click=True)
-        flow.connect("child-activated", lambda _f, child: self.open_item(child.item_id, focus=False))
-        return flow
 
     def _actions(self):
         def add(name, cb, accels=None, param=None):
@@ -488,31 +484,61 @@ class MainWindow(Adw.ApplicationWindow):
                 return
             row = row.get_next_sibling()
 
+    NOTES_PAGE = 60
+
     def _render_notes(self):
         label_id = self.view.split(":", 1)[1] if self.view.startswith("label:") else None
         notes = [n for n in self.repo.notes(label_id=label_id, archived=self.view == ARCHIVE)
                  if n["id"] not in self.pending_deletes]
         label_titles = {c["id"]: c["title"] for c in self.repo.labels()}
-        for flow in (self.pinned_flow, self.others_flow):
-            flow.remove_all()
-        pinned = [n for n in notes if n["pinned"]]
-        for n in notes:
-            card = NoteCard(n, [label_titles[l] for l in json.loads(n["labels_json"] or "[]")
-                                if l in label_titles and l != label_id])
-            card.connect("checklist-changed", lambda c, js: self.repo.update(c.item_id, checklist_json=js))
-            (self.pinned_flow if n["pinned"] else self.others_flow).append(card)
-        self.pinned_label.set_visible(bool(pinned))
-        self.pinned_flow.set_visible(bool(pinned))
-        self.others_label.set_visible(bool(pinned) and len(pinned) < len(notes))
+        key = (self.view, tuple(label_titles.items()), tuple(
+            (n["id"], n["title"], n["body"], n["checklist_json"], n["labels_json"], n["pinned"],
+             n["color"]) for n in notes))
         if not notes:
+            self._notes_key = None
             if self.view == ARCHIVE:
                 self.empty.set_child(empty_state("folder-symbolic", _("Archive is empty")))
             else:
                 self.empty.set_child(empty_state("document-edit-symbolic", _("No notes"),
                                                  _("Notes you add here sync with Google Keep.")))
             self.stack.set_visible_child_name("empty")
-        else:
-            self.stack.set_visible_child_name("notes")
+            return
+        self.stack.set_visible_child_name("notes")
+        if key == self._notes_key:
+            return  # nothing changed: keep the cards (and scroll position)
+        self._notes_key = key
+        self._label_titles = label_titles
+        self._label_id = label_id
+        for m in (self.pinned_flow, self.others_flow):
+            m.remove_all()
+        pinned = [n for n in notes if n["pinned"]]
+        others = [n for n in notes if not n["pinned"]]
+        for n in pinned:
+            self.pinned_flow.append(self._note_card(n))
+        # cards are added page by page while scrolling: hundreds of notes stay fast
+        self._notes_pending = others
+        self._more_notes()
+        self.pinned_label.set_visible(bool(pinned))
+        self.pinned_flow.set_visible(bool(pinned))
+        self.others_label.set_visible(bool(pinned) and bool(others))
+
+    def _note_card(self, n):
+        titles = [self._label_titles[l] for l in json.loads(n["labels_json"] or "[]")
+                  if l in self._label_titles and l != self._label_id]
+        card = NoteCard(n, titles)
+        card.connect("checklist-changed", lambda c, js: self.repo.update(c.item_id, checklist_json=js))
+        card.connect("open-note", lambda c: self.open_item(c.item_id, focus=False))
+        return card
+
+    def _more_notes(self):
+        batch, self._notes_pending = (self._notes_pending[:self.NOTES_PAGE],
+                                      self._notes_pending[self.NOTES_PAGE:])
+        for n in batch:
+            self.others_flow.append(self._note_card(n))
+
+    def _notes_scrolled(self, adj):
+        if self._notes_pending and adj.get_value() + adj.get_page_size() > adj.get_upper() - 800:
+            self._more_notes()
 
     def _render_search(self, text):
         self._clear_list()

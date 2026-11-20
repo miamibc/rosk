@@ -20,7 +20,8 @@ log = logging.getLogger("rosk")
 
 class RoskApp(Adw.Application):
     def __init__(self):
-        super().__init__(application_id=APP_ID,
+        # ROSK_APP_ID lets a development copy run next to the installed one
+        super().__init__(application_id=os.environ.get("ROSK_APP_ID", APP_ID),
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.add_main_option("quick", ord("q"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
                              _("Open the quick-capture window"), None)
