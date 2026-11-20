@@ -29,12 +29,12 @@ GNOME, главное в нём — скорость и краткость: за
 <table>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/list-editor.png?v=2" alt="Список задач и редактор"><br>
-<em>Списки, подзадачи и панель редактирования</em>
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Синтаксис быстрого ввода"><br>
+<em>Дата, список и подзадачи распознаются на лету</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/note-editor.png?v=2" alt="Редактирование заметки-списка"><br>
-<em>Списки с флажками: отмеченное сворачивается, как в Keep</em>
+<img src="docs/screenshots/upcoming-light.png?v=2" alt="Предстоящие, светлая тема"><br>
+<em>Предстоящие задачи по дням, светлая тема</em>
 </td>
 </tr>
 <tr>
@@ -49,12 +49,12 @@ GNOME, главное в нём — скорость и краткость: за
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-syntax.png?v=2" alt="Синтаксис быстрого ввода"><br>
-<em>Дата, список и подзадачи распознаются на лету</em>
+<img src="docs/screenshots/list-editor.png?v=2" alt="Список задач и редактор"><br>
+<em>Списки, подзадачи и панель редактирования</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/upcoming-light.png?v=2" alt="Предстоящие, светлая тема"><br>
-<em>Предстоящие задачи по дням, светлая тема</em>
+<img src="docs/screenshots/note-editor.png?v=2" alt="Редактирование заметки-списка"><br>
+<em>Списки с флажками: отмеченное сворачивается, как в Keep</em>
 </td>
 </tr>
 <tr>

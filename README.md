@@ -29,12 +29,12 @@ seconds, and checking it off even less.
 <table>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/list-editor.png?v=2" alt="Task list with the editor"><br>
-<em>Lists, subtasks and the editor pane</em>
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Quick-capture syntax"><br>
+<em>Date, list and subtasks are recognized as you type</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/note-editor.png?v=2" alt="Editing a checklist note"><br>
-<em>Checklists: checked items fold away, like in Keep</em>
+<img src="docs/screenshots/upcoming-light.png?v=2" alt="Upcoming, light style"><br>
+<em>Upcoming tasks by day, light style</em>
 </td>
 </tr>
 <tr>
@@ -49,12 +49,12 @@ seconds, and checking it off even less.
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-syntax.png?v=2" alt="Quick-capture syntax"><br>
-<em>Date, list and subtasks are recognized as you type</em>
+<img src="docs/screenshots/list-editor.png?v=2" alt="Task list with the editor"><br>
+<em>Lists, subtasks and the editor pane</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/upcoming-light.png?v=2" alt="Upcoming, light style"><br>
-<em>Upcoming tasks by day, light style</em>
+<img src="docs/screenshots/note-editor.png?v=2" alt="Editing a checklist note"><br>
+<em>Checklists: checked items fold away, like in Keep</em>
 </td>
 </tr>
 <tr>
