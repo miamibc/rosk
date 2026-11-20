@@ -114,12 +114,10 @@ class RoskApp(Adw.Application):
         if self.window is None:
             from .ui.window import MainWindow
 
+            # Windows are hidden on close and reused: PyGObject does not deliver "destroy"
+            # reliably, and a destroyed window cannot be shown again.
             self.window = MainWindow(self)
-            self.window.connect("destroy", self._window_gone)
         return self.window
-
-    def _window_gone(self, *_a):
-        self.window = None
 
     def open_item(self, iid):
         win = self._window()
@@ -175,7 +173,6 @@ class RoskApp(Adw.Application):
 
         if self.quick is None:
             self.quick = QuickWindow(self)
-            self.quick.connect("destroy", lambda *_: setattr(self, "quick", None))
         self.quick.popup()
 
     # ---------- change propagation ----------

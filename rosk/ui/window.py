@@ -59,7 +59,8 @@ class SidebarHeader(Gtk.ListBoxRow):
 
 class MainWindow(Adw.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="Rosk", default_width=1000, default_height=680)
+        super().__init__(application=app, title="Rosk", default_width=1000, default_height=680,
+                         hide_on_close=True)
         self.app = app
         self.repo = app.repo
         self.sync = app.sync

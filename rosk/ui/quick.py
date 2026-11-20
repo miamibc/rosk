@@ -16,7 +16,7 @@ PLACEHOLDERS = {
 class QuickWindow(Adw.Window):
     def __init__(self, app):
         super().__init__(application=app, title=_("Quick Add"), default_width=520,
-                         resizable=False, modal=False)
+                         resizable=False, modal=False, hide_on_close=True)
         self.app = app
         self.add_css_class("quick-window")
         self.ignore = set()
@@ -52,6 +52,13 @@ class QuickWindow(Adw.Window):
         keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         keys.connect("key-pressed", self._key)
         self.add_controller(keys)
+        self.connect("close-request", self._on_close)
+
+    def _on_close(self, *_a):
+        # Esc / close discards what was typed; the window itself is kept for next time
+        self.completer.hide()
+        self.entry.set_text("")
+        return False
 
     # ---------- mode ----------
     @property
