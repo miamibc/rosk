@@ -8,6 +8,8 @@ seconds, and checking it off even less.
 
 > Status: first working version (0.1). Tasks sync with Google Tasks; Keep sync needs a one-time login in Preferences.
 
+![Rosk: today's tasks](docs/screenshots/today.png)
+
 ## What it does
 
 - **Quick capture from the top bar.** Rosk adds an icon to the GNOME panel. Click it or press a
@@ -21,6 +23,19 @@ seconds, and checking it off even less.
   today or overdue is highlighted.
 - **Minimal and native to GNOME.** GTK 4 and libadwaita, light and dark themes, full keyboard
   control.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Task list with the editor](docs/screenshots/list-editor.png) | ![Notes](docs/screenshots/notes.png) |
+| Lists, subtasks and the editor pane | Google Keep notes, pinned and colored |
+| ![Quick-capture syntax](docs/screenshots/quick-syntax.png) | ![Upcoming, light style](docs/screenshots/upcoming-light.png) |
+| One-line syntax: date, list and subtasks are recognized as you type | Upcoming tasks by day, light style |
+| ![Quick add](docs/screenshots/quick-add.png) | ![Notes, light style](docs/screenshots/notes-light.png) |
+| Quick add: task or note, `#` suggests your lists | Notes in the light style |
+
+Screenshots use made-up data; `tools/screenshots.py` regenerates them.
 
 ## Requirements
 
