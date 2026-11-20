@@ -1,0 +1,138 @@
+# Rosk — архитектура
+
+Стек — по ADR-001 (рекомендация: Python 3 + GTK 4 + libadwaita, расширение на GJS).
+
+## 1. Компоненты
+
+```
+┌──────────────────────────┐      D-Bus (session)       ┌───────────────────────────────┐
+│ GNOME Shell extension    │ <────────────────────────> │ rosk-service (фоновая служба) │
+│ (GJS)                    │   io.github.miamibc.rosk   │  - локальная БД (SQLite)      │
+│  - индикатор в панели    │                            │  - движок синхронизации       │
+│  - окно быстрого ввода   │                            │  - планировщик уведомлений    │
+│  - глобальная клавиша    │                            │  - search provider            │
+└──────────────────────────┘                            │  - D-Bus API                  │
+┌──────────────────────────┐                            │                               │
+│ Главное окно (GTK4/Adw)  │ <── тот же процесс ──────> │  GApplication, single instance│
+└──────────────────────────┘                            └───────────────┬───────────────┘
+                                                                        │ HTTPS
+                                          ┌─────────────────────────────┼─────────────────┐
+                                          │ GOA (токен)    Google Tasks API    Keep адаптер │
+                                          └───────────────────────────────────────────────┘
+```
+
+- **rosk** — одно GApplication-приложение (`io.github.miamibc.rosk`).
+  Запускается с `--gapplication-service` при входе в систему (autostart) и живёт в фоне
+  без окна. Главное окно открывается в том же процессе мгновенно.
+- **Расширение GNOME Shell** — тонкий клиент: рисует индикатор и popup, весь доступ к данным —
+  через D-Bus службы. Если служба не запущена — D-Bus activation запускает её.
+  Расширение не хранит данные и не ходит в сеть.
+- **Search provider** — `org.gnome.Shell.SearchProvider2`, реализуется службой.
+
+## 2. Структура кода (предварительно)
+
+```
+rosk/
+  core/          модель, разбор быстрого ввода, правила сроков — без GTK, покрыто тестами
+  store/         SQLite: схема, миграции, репозитории, очередь операций
+  sync/          движок синхронизации, адаптеры: tasks.py (Google Tasks), keep.py (gkeepapi)
+  auth/          GOA, libsecret
+  service/       D-Bus API, search provider, уведомления, планировщик
+  ui/            GTK4/libadwaita, шаблоны GtkBuilder (.ui)
+extension/       GNOME Shell extension (GJS)
+data/            .desktop, иконки, gschema, D-Bus service files, metainfo
+po/              переводы
+tests/
+```
+
+Сборки нет (чистый Python), установка — `make install` в домашний каталог, см. ADR-010.
+Расширение ставится тем же `make install`.
+
+## 3. Модель данных (SQLite, `~/.local/share/rosk/rosk.db`)
+
+Единая таблица объектов с типом, чтобы UI работал с задачами и заметками одинаково, а адаптеры
+синхронизации — каждый со своим типом.
+
+```sql
+account      (id, goa_id, email, keep_enabled, ...)
+collection   (id, account_id, kind TEXT CHECK(kind IN ('tasklist','label')),
+              remote_id, title, position, updated_at, deleted)
+item         (id TEXT PRIMARY KEY,            -- локальный UUID, стабилен навсегда
+              account_id, kind TEXT CHECK(kind IN ('task','note')),
+              remote_id, remote_etag, remote_updated,
+              collection_id,                  -- список задач; для заметок NULL (метки — отдельно)
+              parent_id, position,            -- подзадачи / порядок
+              title, body,                    -- notes задачи / текст заметки
+              status, completed_at,
+              due_date,                       -- только дата (ADR-006)
+              due_time, recurrence, starred,  -- зарезервировано под M7 (внутренний API), пока NULL
+              pinned, color, archived, trashed, -- заметки
+              links_json, web_view_link, assignment_json,  -- только чтение
+              created_at, updated_at, deleted)
+note_item    (id, item_id, parent_id, position, text, checked)   -- пункты чек-листа
+item_label   (item_id, collection_id)                             -- метки заметок
+base         (item_id, snapshot_json)        -- последняя синхронизированная версия (для 3-way merge)
+outbox       (seq INTEGER PRIMARY KEY, item_id, op, payload_json, created_at, attempts, last_error)
+sync_state   (account_id, scope, cursor)     -- updatedMin для Tasks, токен для Keep
+history      (item_id, at, source, snapshot_json)  -- проигравшие версии при конфликтах
+```
+
+Полнотекстовый поиск — FTS5 по `title`, `body`, `note_item.text`.
+
+## 4. Поток изменений
+
+1. UI / расширение вызывают операцию (например, `complete(item_id)`).
+2. В одной транзакции: изменение `item` + запись в `outbox` (с коалесценцией: несколько правок
+   одного поля подряд схлопываются в одну).
+3. UI получает сигнал об изменении и перерисовывается — без ожидания сети.
+4. Движок синхронизации подхватывает очередь (debounce ~2 с).
+
+## 5. Синхронизация
+
+Триггеры: старт службы, появление сети (`Gio.NetworkMonitor`), локальное изменение (debounce),
+открытие главного окна, таймер (5 мин при открытом окне, 15 мин в фоне), кнопка «Синхронизировать».
+
+Цикл для аккаунта:
+
+1. **Токен** из GOA (`call_get_access_token`); при 401 — `call_ensure_credentials` и повтор.
+2. **Push**: отправить `outbox` по порядку. Создание -> получаем `remote_id`, записываем маппинг.
+   Операции над объектами, у которых ещё нет `remote_id`, ждут создания родителя/объекта.
+   Ошибки 4xx (кроме 401/404/409/429) — операция помечается проблемной, очередь не блокируется
+   для остальных объектов. 5xx/429/нет сети — экспоненциальная задержка.
+3. **Pull**: `tasks.list(updatedMin=cursor - 1 мин, showDeleted, showHidden)` по каждому списку
+   (+ `tasklists.list`). Для Keep — `gkeepapi.sync()` (инкрементальная, по собственному токену состояния).
+4. **Merge** на уровне полей (3-way: `base` / локальное / удалённое):
+   - поле изменено только с одной стороны — берём изменение;
+   - с обеих сторон — побеждает более позднее (`updated_at` локальный vs `updated` сервера),
+     проигравшая версия пишется в `history`;
+   - удаление против изменения — изменение побеждает (объект восстанавливается), кроме случая,
+     когда удаление сделано явно пользователем в Rosk;
+   - выполнение (`status`) всегда побеждает невыполнение, если обе стороны изменились.
+5. Обновить `base`, `sync_state.cursor`.
+6. Первый вход: полная загрузка; если локально уже есть данные (работали оффлайн до входа) —
+   локальные объекты загружаются как новые, дубликаты по (заголовок, список, срок) предлагается
+   объединить.
+
+Инвариант: задачи синхронизируются только адаптером Tasks, заметки — только адаптером Keep.
+Адаптер отказывается принимать объект чужого `kind`.
+
+## 6. Срок (ADR-006)
+
+В первой версии срок — только дата (поле `due` публичного API). Время, повторение и звёздочка
+появятся вместе с адаптером внутреннего API Google Tasks (ROADMAP M7); колонки под них в схеме
+уже есть.
+
+## 7. Расширение GNOME Shell
+
+- Поддерживаемые версии shell: 50+ (ESM-модули).
+- `PanelMenu.Button` с иконкой и счётчиком; popup с `St.Entry` и списком «Сегодня».
+- Горячая клавиша через `Main.wm.addKeybinding` (gschema расширения).
+- D-Bus прокси к `io.github.miamibc.rosk`: `QuickAdd(text) -> id`, `ParsePreview(text) -> chips`,
+  `ListDue() -> items`, `Complete(id)`, `Open(id)`, сигнал `Changed`.
+- Разбор быстрого ввода выполняет служба (единая реализация); превью чипов — через `ParsePreview`.
+
+## 8. Безопасность
+
+- Токены Google не хранятся в Rosk: каждый раз запрашиваются у GOA.
+- Master token Keep (`gkeepapi`) — только в libsecret, никогда в файлах/логах.
+- Логи не содержат текстов задач (только id) при уровне INFO и выше.
