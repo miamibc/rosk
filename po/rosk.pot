@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:28+0200\n"
+"POT-Creation-Date: 2026-11-20 17:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -288,10 +288,6 @@ msgstr ""
 msgid ""
 "Tasks sync with Google Tasks through GNOME Online Accounts, notes with "
 "Google Keep."
-msgstr ""
-
-#: rosk/ui/about.py:52
-msgid "Website"
 msgstr ""
 
 #: rosk/ui/about.py:59

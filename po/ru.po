@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rosk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:28+0200\n"
+"POT-Creation-Date: 2026-11-20 17:58+0200\n"
 "PO-Revision-Date: 2026-11-20 17:00+0200\n"
 "Last-Translator: Rosk developers\n"
 "Language-Team: Russian\n"
@@ -292,15 +292,14 @@ msgid ""
 "Google Keep."
 msgstr "Задачи синхронизируются через сетевые учётные записи GNOME."
 
-#: rosk/ui/about.py:52
-msgid "Website"
-msgstr "Сайт"
-
 #: rosk/ui/about.py:59
 msgid ""
 "This program comes with absolutely no warranty. It is free software under "
 "the <a href=\"{}\">GNU General Public License, version 3 or later</a>."
-msgstr "Эта программа поставляется без каких-либо гарантий. Это свободная программа под лицензией <a href=\"{}\">GNU General Public License версии 3 или новее</a>."
+msgstr ""
+"Эта программа поставляется без каких-либо гарантий. Это свободная программа "
+"под лицензией <a href=\"{}\">GNU General Public License версии 3 или новее</"
+"a>."
 
 #: rosk/ui/editor.py:65
 msgid "Close"
@@ -898,6 +897,3 @@ msgstr "Rosk запускается…"
 #: extension/extension.js:245
 msgid "Nothing due. Enjoy the day."
 msgstr "Сроков нет. Хорошего дня."
-
-#~ msgid "Add a task…  tomorrow  #list   (n: for a note)"
-#~ msgstr "Задача…  завтра  #список   (n: — заметка)"

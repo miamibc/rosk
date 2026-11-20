@@ -49,7 +49,7 @@ class AboutDialog(Adw.Dialog):
         box.append(_label(_("Tasks sync with Google Tasks through GNOME Online Accounts, "
                             "notes with Google Keep."), "dim-label", "caption"))
 
-        site = Gtk.LinkButton(uri=WEBSITE, label=_("Website"), halign=Gtk.Align.CENTER)
+        site = Gtk.LinkButton(uri=WEBSITE, label="GitHub", halign=Gtk.Align.CENTER)
         site.add_css_class("pill")
         site.set_margin_top(12)
         site.set_margin_bottom(12)
