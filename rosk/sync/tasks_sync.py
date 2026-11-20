@@ -251,7 +251,8 @@ class TasksSync:
                 parent_remote = parent["remote_id"] if parent else None
                 if not parent_remote:
                     return False
-            r = self.client.insert_task(list_remote, self._body(item), parent=parent_remote)
+            r = self.client.insert_task(list_remote, self._body(item), parent=parent_remote,
+                                        previous=self._previous_sibling_remote(item))
             self._after_write(op, item, r, item["collection_id"])
             return True
 

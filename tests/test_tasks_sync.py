@@ -158,3 +158,12 @@ def test_quick_add_new_list(env):
     home = [l for l in g.lists.values() if l["title"] == "Home"]
     assert home
     assert [t["_list"] for t in g.tasks.values()] == [home[0]["id"]]
+
+
+def test_subtask_order_kept(env):
+    g, repo, sync, work = env
+    sync.sync()
+    iid = repo.quick_add("Trip #Work: - tickets - hotel - visa")
+    assert [c["title"] for c in repo.children(iid)] == ["tickets", "hotel", "visa"]
+    sync.sync()
+    assert [c["title"] for c in repo.children(iid)] == ["tickets", "hotel", "visa"]

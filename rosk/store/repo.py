@@ -165,15 +165,33 @@ class Repo:
         return self.create_collection(kind, title)
 
     # ---------- items ----------
+    def _siblings(self, collection_id, parent_id):
+        if parent_id:
+            return self.store.children(parent_id)
+        return self.store.items("kind='task' AND collection_id=? AND parent_id IS NULL",
+                                (collection_id,))
+
     def create_task(self, title, collection_id=None, due=None, parent_id=None, body="",
-                    notify=True):
+                    after_id=None, notify=True):
+        """New tasks go on top (like Google), or right after `after_id`."""
         if parent_id:
             parent = self.store.item(parent_id)
             collection_id = parent["collection_id"]
         collection_id = collection_id or self.default_tasklist()["id"]
+        sibs = self._siblings(collection_id, parent_id)
+        if after_id:
+            ids = [x["id"] for x in sibs]
+            i = ids.index(after_id) if after_id in ids else len(ids) - 1
+            nxt = sibs[i + 1]["position"] if i + 1 < len(sibs) else None
+            position = position_between(sibs[i]["position"] if sibs else None, nxt)
+            if nxt is None and sibs:
+                position = position_between(sibs[i]["position"], None)
+        else:
+            position = position_between(None, sibs[0]["position"] if sibs else None)
         with self.store.tx():
             iid = self.store.insert_item(kind="task", title=title.strip(), body=body or "",
                                          collection_id=collection_id, parent_id=parent_id,
+                                         position=position,
                                          due_date=due.isoformat() if isinstance(due, date) else due)
             self.store.enqueue("item", iid, "create")
         if notify:
@@ -208,9 +226,9 @@ class Repo:
             if r.list_name:
                 collection_id = self.ensure_collection("tasklist", r.list_name)
             iid = self.create_task(title, collection_id=collection_id, due=r.due, notify=False)
-            # Google shows new tasks on top; add subtasks bottom-up so they keep their order.
-            for sub in reversed(r.subtasks):
-                self.create_task(sub, parent_id=iid, notify=False)
+            prev = None
+            for sub in r.subtasks:
+                prev = self.create_task(sub, parent_id=iid, after_id=prev, notify=False)
         self.notify()
         return iid
 
@@ -292,10 +310,11 @@ class Repo:
                                    notify=False)
         else:
             new = self.create_task(item["title"] or _("Untitled"), body=item["body"], notify=False)
-            if item["checklist_json"]:
-                for entry in reversed(json.loads(item["checklist_json"])):
-                    sub = self.create_task(entry.get("text", ""), parent_id=new, notify=False)
-                    if entry.get("checked"):
-                        self.set_done(sub)
+            prev = None
+            for entry in json.loads(item["checklist_json"] or "[]"):
+                prev = self.create_task(entry.get("text", ""), parent_id=new, after_id=prev,
+                                        notify=False)
+                if entry.get("checked"):
+                    self.set_done(prev)
         self.delete(iid)
         return new

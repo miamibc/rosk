@@ -1,0 +1,93 @@
+/* Rosk — minimal styles on top of libadwaita */
+
+.chip {
+  border-radius: 99px;
+  padding: 1px 8px;
+  font-size: 0.85em;
+  font-feature-settings: "tnum";
+  background-color: alpha(currentColor, 0.08);
+}
+.chip.overdue {
+  color: var(--destructive-color);
+  background-color: color-mix(in srgb, var(--destructive-bg-color) 16%, transparent);
+  font-weight: bold;
+}
+.chip.today {
+  color: var(--warning-color);
+  background-color: color-mix(in srgb, var(--warning-bg-color) 18%, transparent);
+  font-weight: bold;
+}
+.chip.tomorrow { font-weight: bold; }
+.chip.later { opacity: 0.65; }
+.chip.list { opacity: 0.7; }
+.chip.link { opacity: 0.85; }
+.chip.preview-date { color: var(--warning-color); }
+.chip.preview-note { color: var(--success-color); }
+
+button.chip { min-height: 0; min-width: 0; }
+
+.task-row { padding: 6px 4px; }
+.task-row.subtask { padding-top: 2px; padding-bottom: 2px; }
+.task-title { font-size: 1.02em; }
+.task-row.done .task-title { text-decoration-line: line-through; opacity: 0.5; }
+.task-row.crossing .task-title {
+  text-decoration-line: line-through;
+  opacity: 0.45;
+  transition: opacity 280ms ease-out;
+}
+.task-body { opacity: 0.55; font-size: 0.9em; }
+
+.group-header {
+  font-weight: bold;
+  font-size: 0.9em;
+  opacity: 0.7;
+  padding: 18px 12px 6px 12px;
+}
+.group-header.overdue { color: var(--destructive-color); opacity: 1; }
+.group-header.today { color: var(--warning-color); opacity: 1; }
+
+.add-entry { min-height: 40px; font-size: 1.05em; }
+
+.sidebar-count { opacity: 0.55; font-feature-settings: "tnum"; }
+.sidebar-count.overdue { color: var(--destructive-color); opacity: 1; font-weight: bold; }
+
+/* Keep-like note cards */
+.note-card {
+  border-radius: 12px;
+  padding: 12px 14px;
+  background-color: var(--card-bg-color);
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+.note-card .note-title { font-weight: bold; }
+.note-card .note-body { opacity: 0.85; }
+flowboxchild { padding: 0; border-radius: 12px; }
+flowboxchild:selected .note-card { box-shadow: 0 0 0 2px var(--accent-bg-color); }
+
+.note-RED      { background-color: color-mix(in srgb, #f28b82 40%, var(--card-bg-color)); }
+.note-ORANGE   { background-color: color-mix(in srgb, #fbbc04 35%, var(--card-bg-color)); }
+.note-YELLOW   { background-color: color-mix(in srgb, #fff475 40%, var(--card-bg-color)); }
+.note-GREEN    { background-color: color-mix(in srgb, #ccff90 40%, var(--card-bg-color)); }
+.note-TEAL     { background-color: color-mix(in srgb, #a7ffeb 40%, var(--card-bg-color)); }
+.note-BLUE     { background-color: color-mix(in srgb, #cbf0f8 45%, var(--card-bg-color)); }
+.note-CERULEAN { background-color: color-mix(in srgb, #aecbfa 45%, var(--card-bg-color)); }
+.note-PURPLE   { background-color: color-mix(in srgb, #d7aefb 40%, var(--card-bg-color)); }
+.note-PINK     { background-color: color-mix(in srgb, #fdcfe8 45%, var(--card-bg-color)); }
+.note-BROWN    { background-color: color-mix(in srgb, #e6c9a8 45%, var(--card-bg-color)); }
+.note-GRAY     { background-color: color-mix(in srgb, #e8eaed 40%, var(--card-bg-color)); }
+
+.color-dot {
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px alpha(currentColor, 0.2);
+}
+.color-dot.selected { box-shadow: inset 0 0 0 2px var(--accent-bg-color); }
+
+.editor-title { font-size: 1.25em; font-weight: bold; }
+.editor-text { background: none; }
+.editor-placeholder { opacity: 0.45; margin: 10px 12px; }
+
+.quick-window entry { min-height: 44px; font-size: 1.15em; }
+
+.empty-hint { opacity: 0.5; }
