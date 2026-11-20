@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 16:39+0200\n"
+"POT-Creation-Date: 2026-11-20 16:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,7 +184,7 @@ msgstr ""
 #: rosk/core/dates.py:81 rosk/core/dates.py:94 rosk/ui/editor.py:318
 #: rosk/ui/window.py:19 rosk/ui/window.py:118 rosk/ui/window.py:202
 #: rosk/ui/window.py:332 rosk/ui/window.py:408 rosk/ui/window.py:442
-#: extension/extension.js:185
+#: extension/extension.js:240
 msgid "Today"
 msgstr ""
 
@@ -192,28 +192,35 @@ msgstr ""
 msgid "Tomorrow"
 msgstr ""
 
-#: rosk/service/dbus.py:80 rosk/service/dbus.py:191 rosk/store/repo.py:321
+#: rosk/service/dbus.py:83 rosk/service/dbus.py:202 rosk/store/repo.py:332
 #: rosk/ui/editor.py:279 rosk/ui/widgets.py:61 rosk/ui/window.py:529
-#: rosk/ui/window.py:684
+#: rosk/ui/window.py:677
 msgid "Untitled"
 msgstr ""
 
-#: rosk/service/dbus.py:96 rosk/ui/quick.py:69 rosk/ui/window.py:577
+#: rosk/service/dbus.py:99 rosk/ui/quick.py:112 rosk/ui/window.py:570
 msgid "New: {}"
 msgstr ""
 
-#: rosk/service/dbus.py:98 rosk/service/dbus.py:184 rosk/ui/editor.py:101
-#: rosk/ui/quick.py:71 rosk/ui/window.py:579
+#: rosk/service/dbus.py:101 rosk/service/dbus.py:195 rosk/ui/editor.py:101
+#: rosk/ui/quick.py:31 rosk/ui/quick.py:114 rosk/ui/window.py:572
+#: extension/extension.js:83
 msgid "Note"
 msgstr ""
 
-#: rosk/service/dbus.py:101 rosk/ui/quick.py:73 rosk/ui/window.py:581
+#: rosk/service/dbus.py:105 rosk/ui/quick.py:117
+msgid "{} item"
+msgid_plural "{} items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosk/service/dbus.py:106 rosk/ui/quick.py:118 rosk/ui/window.py:574
 msgid "{} subtask"
 msgid_plural "{} subtasks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rosk/service/dbus.py:182 rosk/ui/window.py:23 rosk/ui/window.py:655
+#: rosk/service/dbus.py:193 rosk/ui/window.py:23 rosk/ui/window.py:648
 msgid "Completed"
 msgstr ""
 
@@ -221,7 +228,7 @@ msgstr ""
 msgid "Quick Add…"
 msgstr ""
 
-#: rosk/service/tray.py:111 extension/extension.js:114
+#: rosk/service/tray.py:111 extension/extension.js:147
 msgid "Open Rosk"
 msgstr ""
 
@@ -229,7 +236,7 @@ msgstr ""
 msgid "Sync Now"
 msgstr ""
 
-#: rosk/service/tray.py:115 rosk/ui/window.py:102 rosk/ui/window.py:847
+#: rosk/service/tray.py:115 rosk/ui/window.py:102 rosk/ui/window.py:840
 msgid "Quit"
 msgstr ""
 
@@ -277,7 +284,8 @@ msgstr ""
 msgid "More"
 msgstr ""
 
-#: rosk/ui/editor.py:98 rosk/ui/editor.py:205
+#: rosk/ui/editor.py:98 rosk/ui/editor.py:205 rosk/ui/quick.py:29
+#: extension/extension.js:82
 msgid "Task"
 msgstr ""
 
@@ -293,7 +301,7 @@ msgstr ""
 msgid "Convert to Task"
 msgstr ""
 
-#: rosk/ui/editor.py:177 rosk/ui/window.py:794
+#: rosk/ui/editor.py:177 rosk/ui/window.py:787
 msgid "Delete"
 msgstr ""
 
@@ -397,7 +405,7 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: rosk/ui/prefs.py:20 rosk/ui/window.py:99 rosk/ui/window.py:846
+#: rosk/ui/prefs.py:20 rosk/ui/window.py:99 rosk/ui/window.py:839
 msgid "Preferences"
 msgstr ""
 
@@ -530,19 +538,31 @@ msgstr ""
 msgid "Keep connected"
 msgstr ""
 
-#: rosk/ui/quick.py:13
+#: rosk/ui/quick.py:11 extension/extension.js:172
+msgid "Add a task…  tomorrow  #list"
+msgstr ""
+
+#: rosk/ui/quick.py:12 extension/extension.js:171
+msgid "Take a note…  #label   Title: - item - item"
+msgstr ""
+
+#: rosk/ui/quick.py:18
 msgid "Quick Add"
 msgstr ""
 
-#: rosk/ui/quick.py:21
-msgid "Add a task…  tomorrow  #list   (n: for a note)"
+#: rosk/ui/quick.py:30
+msgid "Task (Alt+T)"
 msgstr ""
 
-#: rosk/ui/quick.py:28
+#: rosk/ui/quick.py:32
+msgid "Note (Alt+N)"
+msgstr ""
+
+#: rosk/ui/quick.py:43
 msgid "Enter to save · Shift+Enter to add more · Esc to close"
 msgstr ""
 
-#: rosk/ui/quick.py:74 rosk/ui/window.py:584
+#: rosk/ui/quick.py:119 rosk/ui/window.py:577
 msgid "Click to keep as text"
 msgstr ""
 
@@ -574,11 +594,11 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: rosk/ui/window.py:95 rosk/ui/window.py:260 rosk/ui/window.py:781
+#: rosk/ui/window.py:95 rosk/ui/window.py:260 rosk/ui/window.py:774
 msgid "New List"
 msgstr ""
 
-#: rosk/ui/window.py:100 rosk/ui/window.py:837
+#: rosk/ui/window.py:100 rosk/ui/window.py:830
 msgid "Keyboard Shortcuts"
 msgstr ""
 
@@ -590,7 +610,7 @@ msgstr ""
 msgid "Main Menu"
 msgstr ""
 
-#: rosk/ui/window.py:121 rosk/ui/window.py:343 rosk/ui/window.py:843
+#: rosk/ui/window.py:121 rosk/ui/window.py:343 rosk/ui/window.py:836
 msgid "Search"
 msgstr ""
 
@@ -718,100 +738,96 @@ msgstr ""
 msgid "Nothing found"
 msgstr ""
 
-#: rosk/ui/window.py:618
+#: rosk/ui/window.py:611
 msgid "Note added"
 msgstr ""
 
-#: rosk/ui/window.py:655 rosk/ui/window.py:685
+#: rosk/ui/window.py:648 rosk/ui/window.py:678
 msgid "Undo"
 msgstr ""
 
-#: rosk/ui/window.py:684
+#: rosk/ui/window.py:677
 msgid "Deleted “{}”"
 msgstr ""
 
-#: rosk/ui/window.py:753
+#: rosk/ui/window.py:746
 msgid "Moved to “{}”"
 msgstr ""
 
-#: rosk/ui/window.py:763 rosk/ui/window.py:793
+#: rosk/ui/window.py:756 rosk/ui/window.py:786
 msgid "Cancel"
 msgstr ""
 
-#: rosk/ui/window.py:781
+#: rosk/ui/window.py:774
 msgid "Create"
 msgstr ""
 
-#: rosk/ui/window.py:785
+#: rosk/ui/window.py:778
 msgid "Rename"
 msgstr ""
 
-#: rosk/ui/window.py:790
+#: rosk/ui/window.py:783
 msgid "All tasks in this list will be deleted from Google Tasks too."
 msgstr ""
 
-#: rosk/ui/window.py:791
+#: rosk/ui/window.py:784
 msgid "Notes keep their content, only the label is removed."
 msgstr ""
 
-#: rosk/ui/window.py:792
+#: rosk/ui/window.py:785
 msgid "Delete “{}”?"
 msgstr ""
 
-#: rosk/ui/window.py:813
+#: rosk/ui/window.py:806
 msgid "Syncing…"
 msgstr ""
 
-#: rosk/ui/window.py:819
+#: rosk/ui/window.py:812
 msgid "Synced"
 msgstr ""
 
-#: rosk/ui/window.py:821
+#: rosk/ui/window.py:814
 msgid "{} change waiting to be sent"
 msgid_plural "{} changes waiting to be sent"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rosk/ui/window.py:842
+#: rosk/ui/window.py:835
 msgid "Add a task"
 msgstr ""
 
-#: rosk/ui/window.py:842
+#: rosk/ui/window.py:835
 msgid "Add a note"
 msgstr ""
 
-#: rosk/ui/window.py:843
+#: rosk/ui/window.py:836
 msgid "Smart views"
 msgstr ""
 
-#: rosk/ui/window.py:844
+#: rosk/ui/window.py:837
 msgid "Mark selected task as done"
 msgstr ""
 
-#: rosk/ui/window.py:845
+#: rosk/ui/window.py:838
 msgid "Delete selected item"
 msgstr ""
 
-#: rosk/ui/window.py:845
+#: rosk/ui/window.py:838
 msgid "Open selected item"
 msgstr ""
 
-#: rosk/ui/window.py:846
+#: rosk/ui/window.py:839
 msgid "Sync now"
 msgstr ""
 
-#: rosk/ui/window.py:847
+#: rosk/ui/window.py:840
 msgid "Close window"
 msgstr ""
 
-#: extension/extension.js:78
-msgid "Add a task…  tomorrow  #list   (n: note)"
-msgstr ""
-
-#: extension/extension.js:190
+#: extension/extension.js:245
 msgid "Rosk is starting…"
 msgstr ""
 
-#: extension/extension.js:190
+#: extension/extension.js:245
 msgid "Nothing due. Enjoy the day."
 msgstr ""

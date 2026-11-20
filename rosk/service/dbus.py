@@ -16,6 +16,8 @@ SERVICE_XML = f"""
   <interface name="{SERVICE_IFACE}">
     <method name="QuickAdd"><arg type="s" name="text" direction="in"/><arg type="s" name="id" direction="out"/></method>
     <method name="Preview"><arg type="s" name="text" direction="in"/><arg type="s" name="json" direction="out"/></method>
+    <method name="Mode"><arg type="s" name="mode" direction="out"/></method>
+    <method name="SetMode"><arg type="s" name="mode" direction="in"/></method>
     <method name="Suggest"><arg type="s" name="text" direction="in"/><arg type="s" name="json" direction="out"/></method>
     <method name="Due"><arg type="s" name="json" direction="out"/></method>
     <method name="Counts"><arg type="s" name="json" direction="out"/></method>
@@ -71,7 +73,8 @@ class ServiceApi:
     # ---------- data ----------
     def counts(self):
         c = self.repo.counts()
-        return {"today": c["today"], "overdue": c["overdue"], "upcoming": c["upcoming"]}
+        return {"today": c["today"], "overdue": c["overdue"], "upcoming": c["upcoming"],
+                "mode": self.repo.quick_mode()}
 
     def due(self, limit=12):
         titles = {c["id"]: c["title"] for c in self.repo.tasklists()}
@@ -84,7 +87,7 @@ class ServiceApi:
         return out
 
     def preview(self, text):
-        r = quickparse.parse(text)
+        r = quickparse.parse(text, default_kind=self.repo.quick_mode())
         chips = []
         for sp in r.spans:
             if sp.kind == "date":
@@ -97,8 +100,10 @@ class ServiceApi:
             elif sp.kind == "note":
                 chips.append({"kind": "note", "text": _("Note")})
             else:
-                chips.append({"kind": "subtasks", "text": ngettext(
-                    "{} subtask", "{} subtasks", len(sp.value)).format(len(sp.value))})
+                n = len(sp.value)
+                chips.append({"kind": "subtasks", "text": (
+                    ngettext("{} item", "{} items", n) if r.kind == quickparse.NOTE
+                    else ngettext("{} subtask", "{} subtasks", n)).format(n)})
         return {"title": r.title, "chips": chips}
 
     def suggest(self, text):
@@ -110,7 +115,8 @@ class ServiceApi:
         if not m:
             return []
         prefix = m.group(1).replace("_", " ").lower()
-        kind = "label" if quickparse.parse(text).kind == quickparse.NOTE else "tasklist"
+        parsed = quickparse.parse(text, default_kind=self.repo.quick_mode())
+        kind = "label" if parsed.kind == quickparse.NOTE else "tasklist"
         names = [c["title"] for c in self.repo.store.collections(kind)]
         starts = [n for n in names if n.lower().startswith(prefix)]
         contains = [n for n in names if prefix and prefix in n.lower() and n not in starts]
@@ -127,11 +133,16 @@ class ServiceApi:
         try:
             args = params.unpack()
             if method == "QuickAdd":
-                iid = self.repo.quick_add(args[0]) or ""
+                iid = self.repo.quick_add(args[0], kind=self.repo.quick_mode()) or ""
                 self.app.sync.request()
                 invocation.return_value(GLib.Variant("(s)", (iid,)))
             elif method == "Preview":
                 invocation.return_value(GLib.Variant("(s)", (json.dumps(self.preview(args[0])),)))
+            elif method == "Mode":
+                invocation.return_value(GLib.Variant("(s)", (self.repo.quick_mode(),)))
+            elif method == "SetMode":
+                self.repo.set_quick_mode(args[0])
+                invocation.return_value(None)
             elif method == "Suggest":
                 invocation.return_value(GLib.Variant("(s)", (json.dumps(self.suggest(args[0])),)))
             elif method == "Due":

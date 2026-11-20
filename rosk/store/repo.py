@@ -219,9 +219,20 @@ class Repo:
             self.notify()
         return iid
 
-    def quick_add(self, text, collection_id=None, ignore=()):
+    def quick_mode(self):
+        """Last mode of the quick-capture box: 'task' or 'note' (shared by all entry points)."""
+        mode = self.store.get_meta("quick_mode", quickparse.TASK)
+        return mode if mode in (quickparse.TASK, quickparse.NOTE) else quickparse.TASK
+
+    def set_quick_mode(self, mode):
+        if mode in (quickparse.TASK, quickparse.NOTE) and mode != self.quick_mode():
+            with self.store.tx():
+                self.store.set_meta("quick_mode", mode)
+            self.notify("mode")
+
+    def quick_add(self, text, collection_id=None, ignore=(), kind=quickparse.TASK):
         """Creates a task or a note from a quick-capture line. Returns the new item id."""
-        r = quickparse.parse(text, ignore=ignore)
+        r = quickparse.parse(text, ignore=ignore, default_kind=kind)
         if not r.title and not r.subtasks:
             return None
         title = r.title or (r.subtasks[0] if r.subtasks else "")

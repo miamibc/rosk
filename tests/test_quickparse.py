@@ -90,3 +90,22 @@ def test_tag_with_spaces_resolves_existing_list(tmp_path):
     assert repo.item(iid)["collection_id"] == my
     iid = repo.quick_add("call #New_List")
     assert repo.store.collection(repo.item(iid)["collection_id"])["title"] == "New List"
+
+
+def test_default_kind_note():
+    r = p("купить молоко завтра #дом", default_kind=qp.NOTE)
+    assert r.kind == qp.NOTE and r.due is None and r.list_name == "дом"
+    assert r.title == "купить молоко завтра"
+    r = p("Покупки: - молоко - сыр", default_kind=qp.NOTE)
+    assert r.kind == qp.NOTE and r.subtasks == ["молоко", "сыр"]
+
+
+def test_quick_mode_remembered(tmp_path):
+    from rosk.store.repo import Repo
+
+    repo = Repo(tmp_path / "m.db")
+    assert repo.quick_mode() == "task"
+    repo.set_quick_mode("note")
+    assert Repo(tmp_path / "m.db").quick_mode() == "note"
+    iid = repo.quick_add("идея", kind="note")
+    assert repo.item(iid)["kind"] == "note"

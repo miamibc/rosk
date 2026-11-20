@@ -31,3 +31,14 @@
 .rosk-suggestions { spacing: 6px; padding: 4px 2px 0 2px; }
 .rosk-suggestion { color: #ffffff; background-color: rgba(255, 255, 255, 0.14); }
 .rosk-suggestion:hover, .rosk-suggestion:focus { background-color: rgba(255, 255, 255, 0.24); }
+
+.rosk-modes { spacing: 4px; padding-bottom: 6px; }
+.rosk-mode {
+  border-radius: 99px;
+  padding: 3px 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+.rosk-mode:hover { background-color: rgba(255, 255, 255, 0.12); }
+.rosk-mode:checked { background-color: -st-accent-color; color: -st-accent-fg-color; }
+.rosk-mode-content { spacing: 6px; }
+.rosk-mode-icon { icon-size: 14px; }

@@ -7,6 +7,11 @@ from ..i18n import _, ngettext
 from .complete import TagCompleter
 from .widgets import chip
 
+PLACEHOLDERS = {
+    quickparse.TASK: _("Add a task…  tomorrow  #list"),
+    quickparse.NOTE: _("Take a note…  #label   Title: - item - item"),
+}
+
 
 class QuickWindow(Adw.Window):
     def __init__(self, app):
@@ -18,10 +23,20 @@ class QuickWindow(Adw.Window):
 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_top=14,
                       margin_bottom=14, margin_start=14, margin_end=14)
-        self.entry = Gtk.Entry(placeholder_text=_("Add a task…  tomorrow  #list   (n: for a note)"))
-        self.entry.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "list-add-symbolic")
+
+        self.mode = Adw.ToggleGroup(halign=Gtk.Align.START)
+        self.mode.add_css_class("round")
+        self.mode.add(Adw.Toggle(name=quickparse.TASK, label=_("Task"),
+                                 icon_name="object-select-symbolic", tooltip=_("Task (Alt+T)")))
+        self.mode.add(Adw.Toggle(name=quickparse.NOTE, label=_("Note"),
+                                 icon_name="document-edit-symbolic", tooltip=_("Note (Alt+N)")))
+        self.mode.set_active_name(app.repo.quick_mode())
+        self.mode.connect("notify::active-name", self._mode_changed)
+        box.append(self.mode)
+
+        self.entry = Gtk.Entry()
         self.entry.connect("changed", self._changed)
-        self.entry.connect("activate", self._activate)
+        self.entry.connect("activate", lambda *_: self.save(keep_open=False))
         box.append(self.entry)
         self.preview = Gtk.Box(spacing=6)
         box.append(self.preview)
@@ -32,18 +47,45 @@ class QuickWindow(Adw.Window):
         self.set_content(box)
 
         self.completer = TagCompleter(self.entry, self._tag_names)
+        self._apply_mode()
 
         keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         keys.connect("key-pressed", self._key)
         self.add_controller(keys)
 
+    # ---------- mode ----------
+    @property
+    def kind(self):
+        return self.mode.get_active_name() or quickparse.TASK
+
+    def _mode_changed(self, *_a):
+        self.app.repo.set_quick_mode(self.kind)
+        self._apply_mode()
+        self.entry.grab_focus_without_selecting()
+
+    def _apply_mode(self):
+        self.entry.set_placeholder_text(PLACEHOLDERS[self.kind])
+        icon = "list-add-symbolic" if self.kind == quickparse.TASK else "document-edit-symbolic"
+        self.entry.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, icon)
+        self._changed(self.entry)
+
+    def _parse(self):
+        return quickparse.parse(self.entry.get_text(), ignore=self.ignore, default_kind=self.kind)
+
     def _tag_names(self):
-        is_note = quickparse.parse(self.entry.get_text()).kind == quickparse.NOTE
         repo = self.app.repo
+        is_note = self._parse().kind == quickparse.NOTE
         return [c["title"] for c in (repo.labels() if is_note else repo.tasklists())]
 
+    # ---------- keys ----------
     def _key(self, _c, keyval, _code, state):
         if self.completer.handle_key(keyval):
+            return True
+        if state & Gdk.ModifierType.ALT_MASK and keyval in (Gdk.KEY_t, Gdk.KEY_T):
+            self.mode.set_active_name(quickparse.TASK)
+            return True
+        if state & Gdk.ModifierType.ALT_MASK and keyval in (Gdk.KEY_n, Gdk.KEY_N):
+            self.mode.set_active_name(quickparse.NOTE)
             return True
         if keyval == Gdk.KEY_Escape:
             self.close()
@@ -54,10 +96,11 @@ class QuickWindow(Adw.Window):
             return True
         return False
 
+    # ---------- preview ----------
     def _changed(self, entry):
         if not entry.get_text():
             self.ignore.clear()
-        r = quickparse.parse(entry.get_text(), ignore=self.ignore)
+        r = self._parse()
         while (c := self.preview.get_first_child()) is not None:
             self.preview.remove(c)
         for sp in r.spans:
@@ -70,20 +113,20 @@ class QuickWindow(Adw.Window):
             elif sp.kind == "note":
                 text = _("Note")
             else:
-                text = ngettext("{} subtask", "{} subtasks", len(sp.value)).format(len(sp.value))
+                n = len(sp.value)
+                text = (ngettext("{} item", "{} items", n) if r.kind == quickparse.NOTE
+                        else ngettext("{} subtask", "{} subtasks", n)).format(n)
             btn = Gtk.Button(child=chip(text, "preview-" + sp.kind), tooltip_text=_("Click to keep as text"))
             btn.add_css_class("flat")
             btn.add_css_class("chip")
             btn.connect("clicked", lambda _b, s=sp.start: (self.ignore.add(s), self._changed(self.entry)))
             self.preview.append(btn)
 
-    def _activate(self, entry):
-        self.save(keep_open=False)
-
+    # ---------- save ----------
     def save(self, keep_open):
         text = self.entry.get_text().strip()
         if text:
-            self.app.repo.quick_add(text, ignore=self.ignore)
+            self.app.repo.quick_add(text, ignore=self.ignore, kind=self.kind)
             self.app.sync.request()
         self.entry.set_text("")
         if keep_open:
@@ -92,5 +135,8 @@ class QuickWindow(Adw.Window):
             self.close()
 
     def popup(self):
+        # another entry point (the panel extension) may have switched the mode
+        if self.mode.get_active_name() != self.app.repo.quick_mode():
+            self.mode.set_active_name(self.app.repo.quick_mode())
         self.present()
         self.entry.grab_focus()

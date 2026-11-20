@@ -550,16 +550,9 @@ class MainWindow(Adw.ApplicationWindow):
         return [c["title"] for c in (self.repo.labels() if notes else self.repo.tasklists())]
 
     def _parse_add(self):
-        text = self.add_entry.get_text()
-        if self._is_notes_view() and text.strip():
-            prefix = "n: "
-            r = quickparse.parse(prefix + text, ignore={i + len(prefix) for i in self.ignore_spans})
-            for sp in r.spans:
-                sp.start -= len(prefix)
-                sp.end -= len(prefix)
-            r.spans = [s for s in r.spans if s.kind != "note"]
-            return r
-        return quickparse.parse(text, ignore=self.ignore_spans)
+        kind = quickparse.NOTE if self._is_notes_view() else quickparse.TASK
+        return quickparse.parse(self.add_entry.get_text(), ignore=self.ignore_spans,
+                                default_kind=kind)
 
     def _on_add_changed(self, entry):
         if not entry.get_text():

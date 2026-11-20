@@ -156,11 +156,12 @@ def _date_from_match(kind, m, today):
     return None
 
 
-def parse(text, today=None, ignore=()):
+def parse(text, today=None, ignore=(), default_kind=TASK):
     """Parses a quick-capture line. `ignore` holds start offsets of spans the user
-    rejected (Backspace on a chip) — those stay part of the title."""
+    rejected (a click on a chip) — those stay part of the title. `default_kind` is
+    what the line becomes without an explicit "n:" prefix."""
     today = today or date.today()
-    result = ParseResult()
+    result = ParseResult(kind=default_kind)
     taken = []  # (start, end)
 
     def free(s, e):

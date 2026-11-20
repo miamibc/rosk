@@ -21,6 +21,8 @@ const IFACE = `
   <interface name="io.github.miamibc.rosk.Service">
     <method name="QuickAdd"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="Preview"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+    <method name="Mode"><arg type="s" direction="out"/></method>
+    <method name="SetMode"><arg type="s" direction="in"/></method>
     <method name="Suggest"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="Due"><arg type="s" direction="out"/></method>
     <method name="Counts"><arg type="s" direction="out"/></method>
@@ -74,14 +76,36 @@ class RoskIndicator extends PanelMenu.Button {
     _buildMenu() {
         const entryItem = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
         const column = new St.BoxLayout({orientation: Clutter.Orientation.VERTICAL, x_expand: true});
+        const modes = new St.BoxLayout({style_class: 'rosk-modes'});
+        this._modeButtons = {};
+        for (const [mode, label, icon] of [
+            ['task', _('Task'), 'object-select-symbolic'],
+            ['note', _('Note'), 'document-edit-symbolic'],
+        ]) {
+            const content = new St.BoxLayout({style_class: 'rosk-mode-content'});
+            content.add_child(new St.Icon({icon_name: icon, style_class: 'rosk-mode-icon'}));
+            content.add_child(new St.Label({text: label, y_align: Clutter.ActorAlign.CENTER}));
+            const button = new St.Button({
+                child: content,
+                style_class: 'rosk-mode',
+                toggle_mode: true,
+                can_focus: true,
+            });
+            button.connect('clicked', () => this._setMode(mode, true));
+            modes.add_child(button);
+            this._modeButtons[mode] = button;
+        }
+        column.add_child(modes);
         this._entry = new St.Entry({
-            hint_text: _('Add a task…  tomorrow  #list   (n: note)'),
             can_focus: true,
             x_expand: true,
             style_class: 'rosk-entry',
         });
-        this._entry.set_primary_icon(new St.Icon({icon_name: 'list-add-symbolic', style_class: 'popup-menu-icon'}));
+        this._entryIcon = new St.Icon({icon_name: 'list-add-symbolic', style_class: 'popup-menu-icon'});
+        this._entry.set_primary_icon(this._entryIcon);
         column.add_child(this._entry);
+        this._mode = 'task';
+        this._setMode('task', false);
         this._chips = new St.BoxLayout({style_class: 'rosk-chips', visible: false});
         column.add_child(this._chips);
         this._suggestions = new St.BoxLayout({style_class: 'rosk-suggestions', visible: false});
@@ -95,6 +119,15 @@ class RoskIndicator extends PanelMenu.Button {
         text.connect('key-press-event', (_actor, event) => {
             const key = event.get_key_symbol();
             const shift = (event.get_state() & Clutter.ModifierType.SHIFT_MASK) !== 0;
+            const alt = (event.get_state() & Clutter.ModifierType.MOD1_MASK) !== 0;
+            if (alt && (key === Clutter.KEY_t || key === Clutter.KEY_T)) {
+                this._setMode('task', true);
+                return Clutter.EVENT_STOP;
+            }
+            if (alt && (key === Clutter.KEY_n || key === Clutter.KEY_N)) {
+                this._setMode('note', true);
+                return Clutter.EVENT_STOP;
+            }
             if (key === Clutter.KEY_Tab && this._suggested.length > 0) {
                 this._acceptSuggestion(this._suggested[0]);
                 return Clutter.EVENT_STOP;
@@ -116,12 +149,32 @@ class RoskIndicator extends PanelMenu.Button {
         this.menu.connect('open-state-changed', (_menu, open) => {
             if (open) {
                 this._refreshDue();
+                this._call('Mode').then(mode => {
+                    if (mode)
+                        this._setMode(mode, false);
+                });
                 GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                     global.stage.set_key_focus(this._entry);
                     return GLib.SOURCE_REMOVE;
                 });
             }
         });
+    }
+
+    _setMode(mode, save) {
+        if (mode !== 'task' && mode !== 'note')
+            return;
+        this._mode = mode;
+        for (const [name, button] of Object.entries(this._modeButtons))
+            button.checked = name === mode;
+        this._entry.hint_text = mode === 'note'
+            ? _('Take a note…  #label   Title: - item - item')
+            : _('Add a task…  tomorrow  #list');
+        this._entryIcon.icon_name = mode === 'note' ? 'document-edit-symbolic' : 'list-add-symbolic';
+        if (save) {
+            this._call('SetMode', mode).then(() => this._preview());
+            global.stage.set_key_focus(this._entry);
+        }
     }
 
     _connectService() {
@@ -165,6 +218,8 @@ class RoskIndicator extends PanelMenu.Button {
         } catch {
             return;
         }
+        if (counts.mode && counts.mode !== this._mode)
+            this._setMode(counts.mode, false);
         const show = this._settings.get_boolean('show-count') && counts.today > 0;
         this._count.text = show ? String(counts.today) : '';
         this._count.visible = show;
