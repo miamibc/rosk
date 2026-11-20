@@ -1,10 +1,4 @@
-# Rosk — install into your home directory (no root needed), like picco.
-#   make install     install the app, the background service and the GNOME Shell extension
-#   make uninstall   remove everything except your data (~/.local/share/rosk)
-#   make run         run from the source tree
-#   make test        run the tests
-
-.PHONY: all venv run test pot locale check-deps install restart uninstall dist clean
+# Rosk — tasks and notes for GNOME. Run `make` to see the targets.
 
 APP_ID    = io.github.miamibc.rosk
 EXT_UUID  = rosk@miamibc.github.io
@@ -17,33 +11,66 @@ DATADIR   = $(PREFIX)/share
 EXTDIR    = $(DATADIR)/gnome-shell/extensions/$(EXT_UUID)
 AUTOSTART = $(HOME)/.config/autostart
 PYTHON   ?= /usr/bin/python3
+VENV      = .venv/bin/python
 LANGS     = ru
 
-all: locale
+# development copy: own app ID and data, so it runs next to the installed Rosk
+DEV_ENV   = ROSK_APP_ID=$(APP_ID).Dev ROSK_DATA_DIR=$(CURDIR)/build/dev-data
+SERVICE   = --session --dest $(APP_ID) --object-path /io/github/miamibc/rosk
 
-venv:
+.DEFAULT_GOAL := help
+.PHONY: help venv run run-offline test lint check pot locale screenshots check-deps install \
+	uninstall restart start quit status sync logs dist clean
+
+help:  ## Show this help
+	@echo "Rosk $(VERSION)"
+	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*## "} {printf "  make %-13s %s\n", $$1, $$2}'
+
+# ---------- development ----------
+
+venv:  ## Create .venv (system PyGObject + gkeepapi, pytest, ruff)
 	$(PYTHON) -m venv --system-site-packages .venv
-	.venv/bin/pip install -q -r requirements.txt pytest
+	.venv/bin/pip install -q -r requirements.txt pytest ruff
 
-run: locale
-	@[ -x .venv/bin/python ] || $(MAKE) venv
-	.venv/bin/python -m rosk
+$(VENV):
+	$(MAKE) venv
 
-test:
-	@[ -x .venv/bin/python ] || $(MAKE) venv
-	.venv/bin/python -m pytest -q tests
+run: $(VENV) locale  ## Run from the source tree with its own data in build/dev-data (syncs with Google)
+	$(DEV_ENV) $(VENV) -m rosk
 
-pot:
+run-offline: $(VENV) locale  ## Same, without sync and without the panel icon
+	$(DEV_ENV) ROSK_NO_SYNC=1 ROSK_NO_TRAY=1 $(VENV) -m rosk
+
+test: $(VENV)  ## Run the tests
+	$(VENV) -m pytest -q tests
+
+lint: $(VENV)  ## Check Python code with ruff
+	@$(VENV) -m ruff --version >/dev/null 2>&1 || .venv/bin/pip install -q ruff
+	$(VENV) -m ruff check --select E9,F --ignore F401 rosk tests tools
+
+check: lint test  ## Everything before a commit: lint, tests, extension, schema, translations
+	node --check --input-type=module < extension/extension.js
+	glib-compile-schemas --strict --dry-run extension/schemas
+	@for l in $(LANGS); do msgfmt -c -o /dev/null po/$$l.po; done
+	@echo "All checks passed"
+
+pot:  ## Update po/rosk.pot and merge it into the translations
 	xgettext --from-code=UTF-8 --keyword=_ --keyword=C_:1c,2 --keyword=ngettext:1,2 \
 		-L Python -o po/rosk.pot $$(find rosk -name '*.py' | sort)
 	xgettext --from-code=UTF-8 --keyword=_ -L JavaScript -j -o po/rosk.pot extension/extension.js
 	for l in $(LANGS); do msgmerge -q -U --backup=none po/$$l.po po/rosk.pot; done
 
-locale:
+locale:  ## Compile translations into build/locale
 	@for l in $(LANGS); do \
 		mkdir -p build/locale/$$l/LC_MESSAGES; \
 		msgfmt -o build/locale/$$l/LC_MESSAGES/rosk.mo po/$$l.po; \
 	done
+
+screenshots: $(VENV) locale  ## Regenerate docs/screenshots from made-up demo data
+	$(VENV) tools/screenshots.py
+
+# ---------- install ----------
 
 check-deps:
 	@$(PYTHON) -c "import gi; \
@@ -53,7 +80,7 @@ check-deps:
 		echo '  sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-goa-1.0 gir1.2-secret-1 python3-venv'; \
 		exit 1; }
 
-install: check-deps locale
+install: check-deps locale  ## Install into ~/.local: app, background service, Shell extension
 	@echo "Installing Rosk $(VERSION) into $(PREFIX)"
 	rm -rf "$(LIBDIR)/rosk" "$(LIBDIR)/locale"
 	mkdir -p "$(LIBDIR)" "$(BINDIR)"
@@ -89,17 +116,8 @@ install: check-deps locale
 	@echo "On Wayland the full panel extension starts after the next login;"
 	@echo "until then a compact icon is shown through AppIndicator."
 
-restart:
-	-gdbus call --session --dest $(APP_ID) --object-path /io/github/miamibc/rosk \
-		--method org.gtk.Actions.Activate quit [] {} >/dev/null 2>&1
-	@sleep 1
-	-gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
-		--method org.freedesktop.DBus.ReloadConfig >/dev/null 2>&1
-	setsid "$(BINDIR)/rosk" --background >/dev/null 2>&1 < /dev/null &
-
-uninstall:
-	-gdbus call --session --dest $(APP_ID) --object-path /io/github/miamibc/rosk \
-		--method org.gtk.Actions.Activate quit [] {} >/dev/null 2>&1
+uninstall:  ## Remove the installation (your data in ~/.local/share/rosk stays)
+	-gdbus call $(SERVICE) --method org.gtk.Actions.Activate quit [] {} >/dev/null 2>&1
 	-gnome-extensions disable $(EXT_UUID) 2>/dev/null
 	rm -rf "$(LIBDIR)" "$(EXTDIR)"
 	rm -f "$(BINDIR)/rosk" \
@@ -111,10 +129,43 @@ uninstall:
 		"$(AUTOSTART)/$(APP_ID).desktop"
 	@echo "Removed. Your data stays in ~/.local/share/rosk"
 
-dist:
+# ---------- the installed service ----------
+
+restart: quit start  ## Restart the installed background service
+
+start:  ## Start the installed service (through D-Bus, so its log goes to the journal)
+	-@gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
+		--method org.freedesktop.DBus.ReloadConfig >/dev/null 2>&1
+	@gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
+		--method org.freedesktop.DBus.StartServiceByName $(APP_ID) 0 >/dev/null && echo "Rosk started"
+
+quit:  ## Stop the installed service
+	-@gdbus call $(SERVICE) --method org.gtk.Actions.Activate quit [] {} >/dev/null 2>&1 \
+		&& echo "Rosk stopped" || echo "Rosk was not running"
+	@sleep 1
+
+status:  ## Is the service running, what is due, is the panel extension active
+	@if gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
+		--method org.freedesktop.DBus.NameHasOwner $(APP_ID) | grep -q true; then \
+		echo "service:   running"; \
+		echo "counts:    $$(gdbus call $(SERVICE)/Service --method $(APP_ID).Service.Counts \
+			| sed "s/^('//; s/',)$$//")"; \
+	else echo "service:   not running (make start)"; fi
+	@state=$$(gnome-extensions info $(EXT_UUID) 2>/dev/null | grep -i 'state' | sed 's/^ *State: *//'); \
+		echo "extension: $${state:-not loaded yet (log out and back in)}"
+
+sync:  ## Sync with Google now
+	@gdbus call $(SERVICE)/Service --method $(APP_ID).Service.Sync >/dev/null && echo "Sync requested"
+
+logs:  ## Recent log lines of the service and the Shell extension
+	@journalctl --user -b -o short-iso --no-pager 2>/dev/null | grep -i rosk | tail -n 40 || true
+
+# ---------- release ----------
+
+dist:  ## Source archive in dist/
 	mkdir -p dist
 	git archive --format=tar.gz --prefix=rosk-$(VERSION)/ -o dist/rosk-$(VERSION).tar.gz HEAD
 	@echo "dist/rosk-$(VERSION).tar.gz"
 
-clean:
-	rm -rf build dist .pytest_cache
+clean:  ## Remove build/, dist/ and caches (not your data)
+	rm -rf build dist .pytest_cache .ruff_cache

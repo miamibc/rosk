@@ -59,7 +59,6 @@ def schedule_snapshot(app, win, path):
         target = win
         if app.quick is not None and app.quick.get_visible():
             target = app.quick
-        dialog = win.get_visible_dialog() if hasattr(win, "get_visible_dialog") else None
         save_png(target, path)
         shots.append(path)
         if os.environ.get("ROSK_SNAPSHOT_QUIT", "1") == "1":

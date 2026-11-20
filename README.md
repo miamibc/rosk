@@ -53,6 +53,7 @@ sudo apt install gir1.2-webkit-6.0
 ```sh
 make install      # into ~/.local, no root needed
 make uninstall    # removes the app, keeps your data in ~/.local/share/rosk
+make status       # is it running, what is due, is the panel extension active
 ```
 
 Rosk then runs in the background, its icon appears in the top bar and it starts with your
@@ -70,13 +71,32 @@ back in Rosk shows a compact AppIndicator icon instead.
 - Google Keep: Preferences → Google Keep → Sign in with Google. Google has no public Keep API for personal accounts,
   so Rosk uses the unofficial [gkeepapi](https://github.com/kiwiz/gkeepapi) library.
 
-## Develop
+## Make targets
 
-```sh
-make venv   # .venv with gkeepapi and pytest, using the system PyGObject
-make test
-make run
-```
+Run `make` to list them all.
+
+| Command | What it does |
+|---|---|
+| **Install and service** | |
+| `make install` | Install into `~/.local`: app, background service, panel extension, search provider, autostart. Run it again to update |
+| `make uninstall` | Remove the installation; your data in `~/.local/share/rosk` stays |
+| `make status` | Whether the service is running, what is due today, whether the panel extension is active |
+| `make sync` | Sync with Google now |
+| `make restart` / `start` / `quit` | Restart, start or stop the installed service |
+| `make logs` | Recent log lines of the service and the extension |
+| **Development** | |
+| `make venv` | Create `.venv` on top of the system PyGObject, with gkeepapi, pytest and ruff |
+| `make run` | Run from the source tree next to the installed Rosk, with its own data in `build/dev-data` (syncs with Google) |
+| `make run-offline` | The same without sync and without the panel icon, to try things safely |
+| `make test` | Run the tests |
+| `make lint` | Check Python code with ruff |
+| `make check` | Everything before a commit: lint, tests, extension syntax, settings schema, translations |
+| `make pot` | Update `po/rosk.pot` from the code and merge it into the translations |
+| `make locale` | Compile translations |
+| `make screenshots` | Regenerate the README screenshots from made-up demo data |
+| **Release** | |
+| `make dist` | Source archive `dist/rosk-<version>.tar.gz` |
+| `make clean` | Remove `build/`, `dist/` and caches (not your data) |
 
 ## Documentation
 
