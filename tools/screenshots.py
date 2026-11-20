@@ -41,9 +41,10 @@ def d(days):
 
 
 def seed(repo):
+    """Little Red Riding Hood's to-do lists."""
     s = repo.store
     lists = {name: repo.create_collection("tasklist", name)
-             for name in ("Personal", "Work", "Home", "Trip to Lisbon")}
+             for name in ("Home", "Grandma", "Forest", "Woodcutter")}
 
     def task(title, lst, due=None, body="", subs=(), done_subs=(), links=None, done=False):
         iid = repo.create_task(title, collection_id=lists[lst], due=due, body=body, notify=False)
@@ -61,29 +62,30 @@ def seed(repo):
         return iid
 
     # created bottom-up: new tasks go on top
-    task("Renew the domain name", "Work", d(-3))
-    task("Reply to Anna about the hosting", "Work", d(-1),
-         links=[{"type": "email", "description": "Hosting options", "link": "https://mail.google.com/"}])
-    task("Book a table for Friday", "Personal", d(0))
-    task("Water the plants", "Home", d(0))
-    task("Prepare the quarterly report", "Work", d(0), body="Numbers from the sales dashboard",
-         subs=("Collect numbers", "Draft slides", "Send to the team"), done_subs=("Collect numbers",))
-    task("Call the bank", "Personal", d(1))
-    task("Dentist appointment", "Personal", d(3))
-    task("Flights and hotel", "Trip to Lisbon", d(5), subs=("Flights", "Hotel near Alfama", "Airport transfer"),
-         done_subs=("Flights",))
-    task("Pack the camera", "Trip to Lisbon", d(9))
-    task("Pastéis de nata tour", "Trip to Lisbon")
-    task("Fix the kitchen tap", "Home", d(12))
-    task("Read “The Pragmatic Programmer”", "Personal")
-    task("Update the website footer", "Work", done=True)
-    task("Buy a birthday present for Mia", "Personal", d(-6), done=True)
+    task("Return Grandma's pie dish", "Grandma", d(-3))
+    task("Reply to Grandma's letter", "Grandma", d(-1),
+         links=[{"type": "email", "description": "Come over on Sunday",
+                 "link": "https://mail.google.com/"}])
+    task("Ask the woodcutter about the short path", "Woodcutter", d(0))
+    task("Wash the red hood", "Home", d(0))
+    task("Bake pies for Grandma", "Home", d(0), body="Apple and cherry, six of each",
+         subs=("Pick apples", "Make the dough", "Bake until golden"), done_subs=("Pick apples",))
+    task("Pick flowers on the way", "Forest", d(1))
+    task("Find the hare who borrowed my basket", "Forest", d(3))
+    task("Visit Grandma", "Grandma", d(5),
+         subs=("Pack the basket", "Take the long path", "Knock three times"),
+         done_subs=("Pack the basket",))
+    task("Mow the lawn at Grandma's", "Grandma", d(9))
+    task("Buy a birch sapling", "Home", d(12))
+    task("Learn the wolf-warning whistle", "Woodcutter")
+    task("Mend the basket", "Home", done=True)
+    task("Buy a red ribbon", "Home", d(-6), done=True)
     with s.tx():
-        s.set_meta("default_list", lists["Personal"])
+        s.set_meta("default_list", lists["Home"])
 
+    recipes = repo.ensure_collection("label", "Recipes")
+    forest = repo.ensure_collection("label", "Forest")
     ideas = repo.ensure_collection("label", "Ideas")
-    shopping = repo.ensure_collection("label", "Shopping")
-    reading = repo.ensure_collection("label", "Reading")
 
     def note(title, body="", items=None, color="DEFAULT", labels=(), pinned=False):
         checklist = [{"text": t, "checked": c} for t, c in items] if items is not None else None
@@ -91,22 +93,29 @@ def seed(repo):
                                notify=False)
         if pinned:
             repo.update(iid, pinned=1)
+        return iid
 
-    note("Weekend", "Bike ride along the river, then lunch at the market.", color="TEAL")
-    note("Books", items=[("Project Hail Mary", False), ("Dune", True), ("Piranesi", False),
-                         ("The Left Hand of Darkness", False)], color="PURPLE", labels=[reading])
-    note("Wi-Fi at the cottage", "Network: cottage-5G\nPassword is on the fridge.")
-    note("App ideas", "A tiny timer that lives in the top bar.\n\nA shared shopping list "
-         "that syncs with Keep.\n\nDark-mode friendly color picker.",
-         color="YELLOW", labels=[ideas])
-    note("Gift ideas", items=[("Headphones for Leo", False), ("Plant for mom", False),
-                              ("Board game", True)], color="PINK")
-    note("Quote", "“Simplicity is prerequisite for reliability.” — Edsger Dijkstra", color="BLUE")
-    note("Groceries", items=[("Milk", False), ("Bread", False), ("Coffee beans", False),
-                             ("Apples", False), ("Olive oil", True), ("Eggs", True)],
-         color="ORANGE", labels=[shopping], pinned=True)
-    note("Lisbon", items=[("Tram 28", False), ("LX Factory", False), ("Belém tower", False),
-                          ("Time Out Market", True)], color="GREEN", pinned=True)
+    note("Lost and found", "The hare borrowed the basket on Tuesday. Promised to bring it back "
+         "by Friday.")
+    note("Garden", items=[("Mow the lawn", False), ("Plant the birch", False),
+                          ("Water the roses", True)], color="TEAL")
+    note("Picnic ideas", items=[("Find the hare", False), ("Checkered blanket", False),
+                                ("Lemonade", True)], color="PINK", labels=[ideas])
+    note("The woodcutter", "Lives by the river. Knows every path in the forest and owes me "
+         "a favour.", color="BLUE")
+    note("Things the wolf said", "“What big eyes you have!” — All the better to see you with.\n\n"
+         "“What big ears you have!” — All the better to hear you with.", color="GRAY",
+         labels=[forest])
+    note("Grandma's pie recipe", items=[("2 cups of flour", True), ("Butter", True),
+                                        ("4 apples", False), ("Cinnamon", False), ("Sugar", False)],
+         color="YELLOW", labels=[recipes])
+    note("Forest path", "Take the long path past the old oak.\nDon't stop to chat with strangers.\n"
+         "Be back before sunset.", color="GREEN", labels=[forest], pinned=True)
+    note("Basket for Grandma", items=[("Apple pies", False), ("Cherry pies", False),
+                                      ("Pot of butter", True), ("Honey", False),
+                                      ("Fresh flowers", True), ("Reading glasses", False),
+                                      ("Warm socks", True)],
+         color="ORANGE", pinned=True)
 
 
 def pump(ms):
@@ -139,18 +148,26 @@ def shots(app):
     win.show_view("today")
     shot("today.png")
 
-    work = app.repo.find_collection("tasklist", "Work")
-    win.show_view("list:" + work["id"])
-    report = app.repo.store.items("title='Prepare the quarterly report'")[0]
-    win.open_item(report["id"], focus=False)
+    home = app.repo.find_collection("tasklist", "Home")
+    win.show_view("list:" + home["id"])
+    pies = app.repo.store.items("title='Bake pies for Grandma'")[0]
+    win.open_item(pies["id"], focus=False)
     shot("list-editor.png")
     win._close_editor()
 
     win.show_view("notes")
     shot("notes.png")
 
+    basket = app.repo.store.items("title='Basket for Grandma'")[0]
+    win.open_item(basket["id"], focus=False)
+    pump(300)
+    win.editor._show_checked = True  # unfold the checked items for the picture
+    win.editor._fill_checklist()
+    shot("note-editor.png")
+    win._close_editor()
+
     win.show_view("today")
-    win.add_entry.set_text("Call the plumber tomorrow #Home: - find the number - book a visit")
+    win.add_entry.set_text("Bring the basket tomorrow #Grandma: - pies - butter - flowers")
     win.add_entry.set_position(-1)
     shot("quick-syntax.png")
     win.add_entry.set_text("")
@@ -175,7 +192,7 @@ def shots(app):
     pump(600)
     q = app.quick
     q.mode.set_active_name("task")
-    q.entry.set_text("Pick up the parcel fri #")
+    q.entry.set_text("Pick strawberries fri #")
     q.entry.set_position(-1)
     pump(700)
     tmp = Path(tempfile.mkdtemp())

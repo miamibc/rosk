@@ -30,14 +30,12 @@ seconds, and checking it off even less.
 |---|---|
 | ![Task list with the editor](docs/screenshots/list-editor.png) | ![Notes](docs/screenshots/notes.png) |
 | Lists, subtasks and the editor pane | Google Keep notes, pinned and colored |
-| ![Quick-capture syntax](docs/screenshots/quick-syntax.png) | ![Upcoming, light style](docs/screenshots/upcoming-light.png) |
-| One-line syntax: date, list and subtasks are recognized as you type | Upcoming tasks by day, light style |
-| ![Quick add](docs/screenshots/quick-add.png) | ![Notes, light style](docs/screenshots/notes-light.png) |
-| Quick add: task or note, `#` suggests your lists | Notes in the light style |
-| ![About](docs/screenshots/about.png) | |
-| The About dialog | |
-
-Screenshots use made-up data; `tools/screenshots.py` regenerates them.
+| ![Editing a checklist note](docs/screenshots/note-editor.png) | ![Quick-capture syntax](docs/screenshots/quick-syntax.png) |
+| Checklist notes: checked items fold away, like in Keep | One-line syntax: date, list and subtasks are recognized as you type |
+| ![Quick add](docs/screenshots/quick-add.png) | ![Upcoming, light style](docs/screenshots/upcoming-light.png) |
+| Quick add: task or note, `#` suggests your lists | Upcoming tasks by day, light style |
+| ![Notes, light style](docs/screenshots/notes-light.png) | ![About](docs/screenshots/about.png) |
+| Notes in the light style | The About dialog |
 
 ## Requirements
 
