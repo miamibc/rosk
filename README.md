@@ -33,24 +33,24 @@ seconds, and checking it off even less.
 <em>Lists, subtasks and the editor pane</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes.png?v=2" alt="Notes"><br>
-<em>Google Keep notes, pinned and colored</em>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center" valign="top">
 <img src="docs/screenshots/note-editor.png?v=2" alt="Editing a checklist note"><br>
 <em>Checklists: checked items fold away, like in Keep</em>
 </td>
+</tr>
+<tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-syntax.png?v=2" alt="Quick-capture syntax"><br>
-<em>Date, list and subtasks are recognized as you type</em>
+<img src="docs/screenshots/notes.png?v=2" alt="Notes"><br>
+<em>Google Keep notes, pinned and colored</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes-light.png?v=2" alt="Notes, light style"><br>
+<em>Notes in the light style</em>
 </td>
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-add.png?v=2" alt="Quick add"><br>
-<em>Quick add: a task or a note, <code>#</code> suggests your lists</em>
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Quick-capture syntax"><br>
+<em>Date, list and subtasks are recognized as you type</em>
 </td>
 <td width="50%" align="center" valign="top">
 <img src="docs/screenshots/upcoming-light.png?v=2" alt="Upcoming, light style"><br>
@@ -59,8 +59,8 @@ seconds, and checking it off even less.
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes-light.png?v=2" alt="Notes, light style"><br>
-<em>Notes in the light style</em>
+<img src="docs/screenshots/quick-add.png?v=2" alt="Quick add"><br>
+<em>Quick add: a task or a note, <code>#</code> suggests your lists</em>
 </td>
 <td width="50%" align="center" valign="top">
 <img src="docs/screenshots/about.png?v=2" alt="About"><br>

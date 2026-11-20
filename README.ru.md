@@ -33,24 +33,24 @@ GNOME, главное в нём — скорость и краткость: за
 <em>Списки, подзадачи и панель редактирования</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes.png?v=2" alt="Заметки"><br>
-<em>Заметки Google Keep: закреплённые и цветные</em>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center" valign="top">
 <img src="docs/screenshots/note-editor.png?v=2" alt="Редактирование заметки-списка"><br>
 <em>Списки с флажками: отмеченное сворачивается, как в Keep</em>
 </td>
+</tr>
+<tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-syntax.png?v=2" alt="Синтаксис быстрого ввода"><br>
-<em>Дата, список и подзадачи распознаются на лету</em>
+<img src="docs/screenshots/notes.png?v=2" alt="Заметки"><br>
+<em>Заметки Google Keep: закреплённые и цветные</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="docs/screenshots/notes-light.png?v=2" alt="Заметки, светлая тема"><br>
+<em>Заметки в светлой теме</em>
 </td>
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/quick-add.png?v=2" alt="Быстрый ввод"><br>
-<em>Быстрый ввод: задача или заметка, после <code>#</code> — подсказки списков</em>
+<img src="docs/screenshots/quick-syntax.png?v=2" alt="Синтаксис быстрого ввода"><br>
+<em>Дата, список и подзадачи распознаются на лету</em>
 </td>
 <td width="50%" align="center" valign="top">
 <img src="docs/screenshots/upcoming-light.png?v=2" alt="Предстоящие, светлая тема"><br>
@@ -59,8 +59,8 @@ GNOME, главное в нём — скорость и краткость: за
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes-light.png?v=2" alt="Заметки, светлая тема"><br>
-<em>Заметки в светлой теме</em>
+<img src="docs/screenshots/quick-add.png?v=2" alt="Быстрый ввод"><br>
+<em>Быстрый ввод: задача или заметка, после <code>#</code> — подсказки списков</em>
 </td>
 <td width="50%" align="center" valign="top">
 <img src="docs/screenshots/about.png?v=2" alt="О программе"><br>
