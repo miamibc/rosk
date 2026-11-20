@@ -33,12 +33,14 @@ class QuickWindow(Adw.Window):
         keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         keys.connect("key-pressed", self._key)
         self.add_controller(keys)
-        self._shift = False
 
     def _key(self, _c, keyval, _code, state):
-        self._shift = bool(state & Gdk.ModifierType.SHIFT_MASK)
         if keyval == Gdk.KEY_Escape:
             self.close()
+            return True
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_ISO_Enter):
+            # GtkEntry only activates on a plain Enter, so both cases are handled here
+            self.save(keep_open=bool(state & Gdk.ModifierType.SHIFT_MASK))
             return True
         return False
 
@@ -64,12 +66,17 @@ class QuickWindow(Adw.Window):
             self.preview.append(btn)
 
     def _activate(self, entry):
-        text = entry.get_text().strip()
+        self.save(keep_open=False)
+
+    def save(self, keep_open):
+        text = self.entry.get_text().strip()
         if text:
             self.app.repo.quick_add(text, ignore=self.ignore)
             self.app.sync.request()
-        entry.set_text("")
-        if not self._shift:
+        self.entry.set_text("")
+        if keep_open:
+            self.entry.grab_focus()
+        else:
             self.close()
 
     def popup(self):
