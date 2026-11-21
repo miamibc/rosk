@@ -1,32 +1,68 @@
-# Tests on every push; on the default branch also builds the source archive (like picco's release flow).
+# Runs when a pull request is merged into master, or by hand on master
+# (Actions -> release -> Run workflow). Pushes to branches and to master do not start it.
+# 1. test:    the same `make check` as before a commit.
+# 2. release: if the version in rosk/__init__.py is already released, raises it by 0.1
+#             (tools/bump_version.py: 0.1.0 -> 0.2.0) and commits "Release X.Y.0" to master;
+#             then tags vX.Y.Z and publishes a GitHub release with the source archive.
+#             A version raised by hand in a pull request is released as it is.
 name: release
 
 on:
-  push:
+  pull_request:
+    types: [closed]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
   test:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged
+    # Rosk runs on the system PyGObject (a PyPI build would need the GLib headers),
+    # so the venv is made like `make venv` does it.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
         with:
-          python-version: "3.12"
-      - name: Install
-        run: pip install -r requirements.txt pytest
-      - name: Test
-        run: python -m pytest -q tests
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
+      - name: System packages
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            python3-gi python3-venv gir1.2-glib-2.0 libglib2.0-bin gettext
+      - name: Venv
+        run: make venv PYTHON=/usr/bin/python3
+      - name: Check
+        run: make check
 
-  dist:
+  release:
     needs: test
-    if: github.ref_name == github.event.repository.default_branch
+    # by hand only from master: the version commit goes there
+    if: github.event_name == 'pull_request' || github.ref_name == 'master'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0  # tags, to see which versions are released
+      - name: Version
+        id: version
+        run: |
+          version=$(python3 -c "import rosk; print(rosk.__version__)")
+          if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            version=$(python3 tools/bump_version.py --write)
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -am "Release $version"
+            git push origin HEAD:master
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Archive
         run: make dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: rosk-source
-          path: dist/*.tar.gz
+      - name: Publish
+        run: |
+          v=${{ steps.version.outputs.version }}
+          gh release create "v$v" "dist/rosk-$v.tar.gz" \
+            --target "$(git rev-parse HEAD)" --title "Rosk $v" --generate-notes

@@ -82,6 +82,9 @@ sudo apt install gir1.2-webkit-6.0
 
 ## Install
 
+From a clone of the repository, or from `rosk-<version>.tar.gz` on the
+[Releases](https://github.com/miamibc/rosk/releases) page (unpack it first):
+
 ```sh
 make install      # into ~/.local, no root needed
 make uninstall    # removes the app, keeps your data in ~/.local/share/rosk
