@@ -82,7 +82,20 @@ sudo apt install gir1.2-webkit-6.0
 
 ## Установка
 
-Из клона репозитория или из архива `rosk-<версия>.tar.gz` со страницы
+Через apt (Ubuntu 25.04+, Debian 13+), обновления потом приходят с `apt upgrade`:
+
+```sh
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://miamibc.github.io/rosk/rosk-archive-keyring.gpg | sudo tee /etc/apt/keyrings/rosk.gpg >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/rosk.gpg] https://miamibc.github.io/rosk stable main" \
+  | sudo tee /etc/apt/sources.list.d/rosk.list
+sudo apt update && sudo apt install rosk
+```
+
+Или скачайте `rosk_<версия>_all.deb` со страницы [Releases](https://github.com/miamibc/rosk/releases)
+и установите командой `sudo apt install ./rosk_<версия>_all.deb`.
+
+Или без root, из клона репозитория или из архива `rosk-<версия>.tar.gz` со страницы
 [Releases](https://github.com/miamibc/rosk/releases) (сначала распакуйте):
 
 ```sh

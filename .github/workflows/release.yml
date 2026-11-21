@@ -3,7 +3,11 @@
 # 1. test:    the same `make check` as before a commit.
 # 2. release: if the version in rosk/__init__.py is already released, raises it by 0.1
 #             (tools/bump_version.py: 0.1.0 -> 0.2.0) and commits "Release X.Y.0" to master;
-#             then tags vX.Y.Z and publishes a GitHub release with the source archive.
+#             then tags vX.Y.Z and publishes a GitHub release with the source archive and
+#             the Debian package (make deb).
+# 3. apt:     adds the package to the signed APT repository on the gh-pages branch
+#             (https://miamibc.github.io/rosk, tools/apt_repo.sh). Skipped until the secret
+#             APT_GPG_PRIVATE_KEY (armored private key; APT_GPG_PASSPHRASE if it has one) is set.
 #             A version raised by hand in a pull request is released as it is.
 name: release
 
@@ -42,6 +46,8 @@ jobs:
       contents: write
     env:
       GH_TOKEN: ${{ github.token }}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -59,10 +65,68 @@ jobs:
             git push origin HEAD:master
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
-      - name: Archive
-        run: make dist
+      - name: Build tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            python3-venv libglib2.0-bin gettext
+      - name: Archive and package
+        run: |
+          make dist
+          make deb
       - name: Publish
         run: |
           v=${{ steps.version.outputs.version }}
-          gh release create "v$v" "dist/rosk-$v.tar.gz" \
+          gh release create "v$v" "dist/rosk-$v.tar.gz" "dist/rosk_${v}_all.deb" \
             --target "$(git rev-parse HEAD)" --title "Rosk $v" --generate-notes
+
+  apt:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      URL: https://miamibc.github.io/rosk
+      VERSION: ${{ needs.release.outputs.version }}
+    steps:
+      - name: Signing key
+        id: key
+        env:
+          KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::notice::APT repository not updated: set the APT_GPG_PRIVATE_KEY secret"
+            exit 0
+          fi
+          printf '%s\n' "$KEY" | gpg --batch --quiet --import
+          fpr=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr/{print $10; exit}')
+          echo "fpr=$fpr" >> "$GITHUB_OUTPUT"
+          if [ -n "$PASSPHRASE" ]; then
+            printf '%s' "$PASSPHRASE" > "$RUNNER_TEMP/passphrase"
+            echo "GPG_PASSPHRASE_FILE=$RUNNER_TEMP/passphrase" >> "$GITHUB_ENV"
+          fi
+      - uses: actions/checkout@v5
+        if: steps.key.outputs.fpr
+        with:
+          ref: master
+          path: src
+      - name: Repository
+        if: steps.key.outputs.fpr
+        env:
+          FPR: ${{ steps.key.outputs.fpr }}
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends apt-utils
+          remote="https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY"
+          git clone --quiet --branch gh-pages "$remote" site \
+            || { git init --quiet -b gh-pages site && git -C site remote add origin "$remote"; }
+          gh release download "v$VERSION" --repo "$GITHUB_REPOSITORY" --pattern "*.deb" --dir debs
+          sh src/tools/apt_repo.sh site "$FPR" "$URL" debs/*.deb
+          cd site
+          git add -A
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit --quiet -m "Rosk $VERSION"
+          git push --quiet origin gh-pages

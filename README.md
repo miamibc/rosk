@@ -82,7 +82,20 @@ sudo apt install gir1.2-webkit-6.0
 
 ## Install
 
-From a clone of the repository, or from `rosk-<version>.tar.gz` on the
+With apt (Ubuntu 25.04+, Debian 13+), updates then come with `apt upgrade`:
+
+```sh
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://miamibc.github.io/rosk/rosk-archive-keyring.gpg | sudo tee /etc/apt/keyrings/rosk.gpg >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/rosk.gpg] https://miamibc.github.io/rosk stable main" \
+  | sudo tee /etc/apt/sources.list.d/rosk.list
+sudo apt update && sudo apt install rosk
+```
+
+Or download `rosk_<version>_all.deb` from [Releases](https://github.com/miamibc/rosk/releases)
+and install it with `sudo apt install ./rosk_<version>_all.deb`.
+
+Or, without root, from a clone of the repository, or from `rosk-<version>.tar.gz` on the
 [Releases](https://github.com/miamibc/rosk/releases) page (unpack it first):
 
 ```sh
