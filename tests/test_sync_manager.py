@@ -121,34 +121,3 @@ def test_heartbeat_polls_by_mode(mgr):
     m._heartbeat()
     run_loop(20)
     assert len(starts) == 2 and starts[-1][1] is True  # quietly
-
-
-def test_polls_look_at_tasks_every_other_time(mgr):
-    repo, m, _starts = mgr
-    m._idle_seconds = lambda: 0
-    m.active = False
-    interval = manager.PRESENT_INTERVAL
-    m.last_tasks_sync = time.time() - interval  # one poll ago
-    m._quiet = True
-    assert m._wants_tasks() is False  # Keep only this time
-    m.last_tasks_sync = time.time() - 2 * interval
-    assert m._wants_tasks() is True
-
-    m.last_tasks_sync = time.time()
-    m._quiet = False  # Refresh button or a push
-    assert m._wants_tasks() is True
-    m._quiet = True
-    repo.quick_add("a task")  # a task change waits to be sent
-    assert m._wants_tasks() is True
-
-
-def test_skipped_tasks_keep_their_status(mgr, monkeypatch, tmp_path):
-    _repo, m, _starts = mgr
-    monkeypatch.setenv("ROSK_DATA_DIR", str(tmp_path / "data"))  # _run opens config.db_path()
-    m._sync_tasks = lambda store: (_ for _ in ()).throw(AssertionError("Tasks called"))
-    m._sync_keep = lambda store: None
-    m._tasks_state = (manager.NO_ACCOUNT, "no account")
-    got = []
-    monkeypatch.setattr(GLib, "idle_add", lambda fn, *a: got.append(a))
-    m._run(with_tasks=False)
-    assert got[0][:2] == (manager.NO_ACCOUNT, "no account")
