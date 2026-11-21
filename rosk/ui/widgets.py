@@ -192,26 +192,27 @@ class NoteCard(Gtk.Box):
         return label
 
     def _checklist(self, entries):
-        unchecked = [(i, e) for i, e in enumerate(entries) if not e.get("checked")]
-        checked = len(entries) - len(unchecked)
-        for idx, entry in unchecked[:MAX_CARD_ITEMS]:
+        """The first items in their own order, checked ones included, like the editor."""
+        for idx, entry in enumerate(entries[:MAX_CARD_ITEMS]):
             row = Gtk.Box(spacing=6)
-            cb = Gtk.CheckButton(valign=Gtk.Align.START)
+            cb = Gtk.CheckButton(valign=Gtk.Align.START, active=bool(entry.get("checked")))
             cb.add_css_class("note-check")
             cb.connect("toggled", self._on_check, idx)
             row.append(cb)
-            row.append(self._label(entry.get("text", ""), "note-item", lines=2, hexpand=True))
+            label = self._label(entry.get("text", ""), "note-item", lines=2, hexpand=True)
+            if entry.get("checked"):
+                label.add_css_class("note-item-done")
+            row.append(label)
             self.append(row)
-        more = len(unchecked) - MAX_CARD_ITEMS
+        more = len(entries) - MAX_CARD_ITEMS
         if more > 0:
             self.append(self._label(_("+ {} more").format(more), "note-more"))
-        if checked:
-            self.append(self._label(ngettext("{} checked item", "{} checked items", checked)
-                                    .format(checked), "note-more"))
 
     def _on_check(self, cb, idx):
         entries = json.loads(self.item["checklist_json"])
         entries[idx]["checked"] = cb.get_active()
+        label = cb.get_next_sibling()
+        (label.add_css_class if cb.get_active() else label.remove_css_class)("note-item-done")
         self.item["checklist_json"] = json.dumps(entries, ensure_ascii=False)
         self.emit("checklist-changed", self.item["checklist_json"])
 

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rosk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:58+0200\n"
+"POT-Creation-Date: 2026-11-21 18:19+0200\n"
 "PO-Revision-Date: 2026-11-20 17:00+0200\n"
 "Last-Translator: Rosk developers\n"
 "Language-Team: Russian\n"
@@ -410,20 +410,21 @@ msgstr "Метки"
 msgid "New label"
 msgstr "Новая метка"
 
-#: rosk/ui/editor.py:450
+#: rosk/ui/editor.py:446
+msgid "Drag to move"
+msgstr "Перетащите, чтобы переместить"
+
+#: rosk/ui/editor.py:461
 msgid "Remove"
 msgstr "Убрать"
 
-#: rosk/ui/editor.py:468
+#: rosk/ui/editor.py:479
 msgid "Add item"
 msgstr "Добавить пункт"
 
-#: rosk/ui/editor.py:475 rosk/ui/widgets.py:209
-msgid "{} checked item"
-msgid_plural "{} checked items"
-msgstr[0] "Добавить пункт"
-msgstr[1] "Добавить пункт"
-msgstr[2] "Добавить пункт"
+#: rosk/ui/editor.py:488
+msgid "Load more ({})"
+msgstr "Показать ещё ({})"
 
 #: rosk/ui/keep_login.py:38 rosk/ui/keep_login.py:54
 msgid "Sign in to Google Keep"
@@ -647,7 +648,7 @@ msgstr "Назначена"
 msgid "Empty note"
 msgstr "Пустая заметка"
 
-#: rosk/ui/widgets.py:207
+#: rosk/ui/widgets.py:209
 msgid "+ {} more"
 msgstr "и ещё {}"
 
@@ -897,3 +898,9 @@ msgstr "Rosk запускается…"
 #: extension/extension.js:245
 msgid "Nothing due. Enjoy the day."
 msgstr "Сроков нет. Хорошего дня."
+
+#~ msgid "{} checked item"
+#~ msgid_plural "{} checked items"
+#~ msgstr[0] "Добавить пункт"
+#~ msgstr[1] "Добавить пункт"
+#~ msgstr[2] "Добавить пункт"

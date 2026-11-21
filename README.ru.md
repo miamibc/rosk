@@ -39,11 +39,11 @@ GNOME, главное в нём — скорость и краткость: за
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes.png?v=2" alt="Заметки"><br>
+<img src="docs/screenshots/notes.png?v=3" alt="Заметки"><br>
 <em>Заметки Google Keep: закреплённые и цветные</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes-light.png?v=2" alt="Заметки, светлая тема"><br>
+<img src="docs/screenshots/notes-light.png?v=3" alt="Заметки, светлая тема"><br>
 <em>Заметки в светлой теме</em>
 </td>
 </tr>
@@ -53,8 +53,8 @@ GNOME, главное в нём — скорость и краткость: за
 <em>Списки, подзадачи и панель редактирования</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/note-editor.png?v=2" alt="Редактирование заметки-списка"><br>
-<em>Списки с флажками: отмеченное сворачивается, как в Keep</em>
+<img src="docs/screenshots/note-editor.png?v=3" alt="Редактирование заметки-списка"><br>
+<em>Списки с флажками в своём порядке, пункты перетаскиваются</em>
 </td>
 </tr>
 <tr>

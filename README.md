@@ -39,11 +39,11 @@ seconds, and checking it off even less.
 </tr>
 <tr>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes.png?v=2" alt="Notes"><br>
+<img src="docs/screenshots/notes.png?v=3" alt="Notes"><br>
 <em>Google Keep notes, pinned and colored</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/notes-light.png?v=2" alt="Notes, light style"><br>
+<img src="docs/screenshots/notes-light.png?v=3" alt="Notes, light style"><br>
 <em>Notes in the light style</em>
 </td>
 </tr>
@@ -53,8 +53,8 @@ seconds, and checking it off even less.
 <em>Lists, subtasks and the editor pane</em>
 </td>
 <td width="50%" align="center" valign="top">
-<img src="docs/screenshots/note-editor.png?v=2" alt="Editing a checklist note"><br>
-<em>Checklists: checked items fold away, like in Keep</em>
+<img src="docs/screenshots/note-editor.png?v=3" alt="Editing a checklist note"><br>
+<em>Checklists keep their order; drag items to move them</em>
 </td>
 </tr>
 <tr>

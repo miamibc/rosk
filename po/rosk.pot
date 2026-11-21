@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 17:58+0200\n"
+"POT-Creation-Date: 2026-11-21 18:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -405,19 +405,21 @@ msgstr ""
 msgid "New label"
 msgstr ""
 
-#: rosk/ui/editor.py:450
+#: rosk/ui/editor.py:446
+msgid "Drag to move"
+msgstr ""
+
+#: rosk/ui/editor.py:461
 msgid "Remove"
 msgstr ""
 
-#: rosk/ui/editor.py:468
+#: rosk/ui/editor.py:479
 msgid "Add item"
 msgstr ""
 
-#: rosk/ui/editor.py:475 rosk/ui/widgets.py:209
-msgid "{} checked item"
-msgid_plural "{} checked items"
-msgstr[0] ""
-msgstr[1] ""
+#: rosk/ui/editor.py:488
+msgid "Load more ({})"
+msgstr ""
 
 #: rosk/ui/keep_login.py:38 rosk/ui/keep_login.py:54
 msgid "Sign in to Google Keep"
@@ -636,7 +638,7 @@ msgstr ""
 msgid "Empty note"
 msgstr ""
 
-#: rosk/ui/widgets.py:207
+#: rosk/ui/widgets.py:209
 msgid "+ {} more"
 msgstr ""
 

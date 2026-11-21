@@ -3,7 +3,7 @@
 import json
 from datetime import date, timedelta
 
-from gi.repository import Adw, GLib, GObject, Gtk
+from gi.repository import Adw, Gdk, GLib, GObject, Gtk
 
 from ..core import dates
 from ..i18n import _, ngettext
@@ -435,9 +435,20 @@ class Editor(Gtk.Box):
                              body="\n".join(e.get("text", "") for e in entries))
         GLib.idle_add(lambda: (self.load(self.item_id), False)[1])
 
+    CHECK_PAGE = 30  # items shown before "Load more"
+
     def _check_row(self, idx, entry):
         row = Gtk.ListBoxRow(activatable=False)
-        h = Gtk.Box(spacing=8, margin_start=10, margin_end=6, margin_top=4, margin_bottom=4)
+        h = Gtk.Box(spacing=8, margin_start=4, margin_end=6, margin_top=4, margin_bottom=4)
+        handle = Gtk.Image.new_from_icon_name("list-drag-handle-symbolic")
+        handle.add_css_class("dim-label")
+        handle.set_cursor_from_name("grab")
+        handle.set_tooltip_text(_("Drag to move"))
+        src = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+        src.connect("prepare", lambda *_a: Gdk.ContentProvider.new_for_value(f"check:{idx}"))
+        src.connect("drag-begin", lambda s, _d: s.set_icon(Gtk.WidgetPaintable.new(row), 20, 20))
+        handle.add_controller(src)
+        h.append(handle)
         cb = Gtk.CheckButton(active=bool(entry.get("checked")))
         cb.connect("toggled", self._check_toggled, idx)
         h.append(cb)
@@ -452,45 +463,60 @@ class Editor(Gtk.Box):
         rm.connect("clicked", self._check_remove, idx)
         h.append(rm)
         row.set_child(h)
+        target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE)
+        target.connect("drop", self._check_drop, row, idx)
+        row.add_controller(target)
+        self._check_entry_widgets[idx] = e
         return row
 
     def _fill_checklist(self):
-        """Like Keep: unchecked items, the add row, then checked items folded away."""
+        """The items in their own order, checked ones included: the add row on top,
+        "Load more" at the bottom when the list is long."""
         box = self.check_box
         while (child := box.get_first_child()) is not None:
             box.remove(child)
-        checked = []
-        for idx, entry in enumerate(self.check_entries):
-            if entry.get("checked"):
-                checked.append((idx, entry))
-            else:
-                box.append(self._check_row(idx, entry))
+        self._check_entry_widgets = {}
         add = Adw.EntryRow(title=_("Add item"))
         add.connect("entry-activated", self._check_add)
         box.append(add)
         self._check_add_row = add
-        if checked:
-            show = getattr(self, "_show_checked", False)
-            toggle = Adw.ActionRow(
-                title=ngettext("{} checked item", "{} checked items", len(checked)).format(len(checked)),
-                activatable=True)
-            toggle.add_prefix(Gtk.Image.new_from_icon_name(
-                "pan-down-symbolic" if show else "pan-end-symbolic"))
-            toggle.connect("activated", self._toggle_checked)
-            box.append(toggle)
-            if show:
-                for idx, entry in checked:
-                    box.append(self._check_row(idx, entry))
+        limit = getattr(self, "_check_limit", self.CHECK_PAGE)
+        for idx, entry in enumerate(self.check_entries[:limit]):
+            box.append(self._check_row(idx, entry))
+        rest = len(self.check_entries) - limit
+        if rest > 0:
+            more = Adw.ButtonRow(title=_("Load more ({})").format(rest))
+            more.connect("activated", self._check_more)
+            box.append(more)
 
-    def _toggle_checked(self, *_a):
-        self._show_checked = not getattr(self, "_show_checked", False)
+    def _check_more(self, *_a):
+        self._check_limit = getattr(self, "_check_limit", self.CHECK_PAGE) + self.CHECK_PAGE
         self._fill_checklist()
 
     def _check_toggled(self, cb, idx):
         self.check_entries[idx]["checked"] = cb.get_active()
+        e = self._check_entry_widgets.get(idx)
+        if e is not None:
+            (e.add_css_class if cb.get_active() else e.remove_css_class)("dim-label")
         self._save_checklist()
-        # move the item between the groups once the click animation has played
-        GLib.timeout_add(250, lambda: (self._fill_checklist(), False)[1])
+
+    def _check_drop(self, _t, value, _x, y, row, dst):
+        if not isinstance(value, str) or not value.startswith("check:"):
+            return False
+        src = int(value[6:])
+        if not 0 <= src < len(self.check_entries):
+            return False
+        pos = dst if y < row.get_height() / 2 else dst + 1
+        entry = self.check_entries.pop(src)
+        if src < pos:
+            pos -= 1
+        if pos == src:
+            self.check_entries.insert(src, entry)
+            return False
+        self.check_entries.insert(pos, entry)
+        self._fill_checklist()
+        self._save_checklist()
+        return True
 
     def _check_text(self, e, idx):
         self.check_entries[idx]["text"] = e.get_text()
@@ -505,7 +531,8 @@ class Editor(Gtk.Box):
         text = row.get_text().strip()
         if not text:
             return
-        self.check_entries.append({"text": text, "checked": False})
+        self.check_entries.insert(0, {"text": text, "checked": False})
+        row.set_text("")
         self._fill_checklist()
         self._save_checklist.flush() if self._save_checklist.src else None
         self._commit_checklist()
