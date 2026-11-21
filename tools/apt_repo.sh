@@ -4,7 +4,7 @@
 # installable. Needs apt-ftparchive (apt-utils) and gpg with the signing key imported; a key
 # with a passphrase takes it from the file named in $GPG_PASSPHRASE_FILE.
 #   tools/apt_repo.sh <repo dir> <signing key id> <url> [package.deb ...]
-# Users then add (see the index.html this writes):
+# Users then add (see the apt.html this writes):
 #   deb [signed-by=/etc/apt/keyrings/rosk.gpg] <url> stable main
 set -eu
 
@@ -51,7 +51,7 @@ gpg --batch --yes --armor --export "$KEY" > rosk-archive-keyring.asc
 touch .nojekyll   # GitHub Pages: serve the files as they are
 
 latest=$(ls "$POOL"/*.deb | sort -V | tail -1)
-cat > index.html <<EOF
+cat > apt.html <<EOF
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="utf-8">
@@ -72,4 +72,7 @@ sudo apt install rosk</pre>
 Or download the latest package directly: <a href="$latest">$(basename "$latest")</a>.</p>
 </html>
 EOF
+if [ ! -f index.html ]; then
+    cp apt.html index.html
+fi
 echo "$REPO: $(ls "$POOL" | wc -l) package(s), signed by $KEY"
