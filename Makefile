@@ -2,7 +2,7 @@
 
 APP_ID    = io.github.miamibc.rosk
 EXT_UUID  = rosk@miamibc.github.io
-VERSION   = $(shell python3 -c "import rosk; print(rosk.__version__)")
+VERSION   = $(shell python3 tools/bump_version.py --current)
 
 PREFIX   ?= $(HOME)/.local
 BINDIR    = $(PREFIX)/bin

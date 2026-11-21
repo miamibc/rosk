@@ -46,6 +46,7 @@ jobs:
       contents: write
     env:
       GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: 1
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -56,7 +57,7 @@ jobs:
       - name: Version
         id: version
         run: |
-          version=$(python3 -c "import rosk; print(rosk.__version__)")
+          version=$(python3 tools/bump_version.py --current)  # not by import: see the script
           if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
             version=$(python3 tools/bump_version.py --write)
             git config user.name "github-actions[bot]"
