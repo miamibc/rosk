@@ -11,7 +11,7 @@ from ..sync import manager as sync_state
 from .complete import TagCompleter
 from .masonry import Masonry
 from .editor import Debounce, Editor
-from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state
+from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state, note_media
 
 TODAY, UPCOMING, ALL, NOTES, COMPLETED, ARCHIVE, SEARCH = (
     "today", "upcoming", "all", "notes", "completed", "archive", "search")
@@ -493,7 +493,7 @@ class MainWindow(Adw.ApplicationWindow):
         label_titles = {c["id"]: c["title"] for c in self.repo.labels()}
         key = (self.view, tuple(label_titles.items()), tuple(
             (n["id"], n["title"], n["body"], n["checklist_json"], n["labels_json"], n["pinned"],
-             n["color"]) for n in notes))
+             n["color"], len(note_media(n))) for n in notes))
         if not notes:
             self._notes_key = None
             if self.view == ARCHIVE:

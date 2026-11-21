@@ -7,6 +7,7 @@ Only items of kind 'note' and collections of kind 'label' are touched here.
 
 import json
 import logging
+import urllib.request
 
 from ..store.db import NOTE_SYNC_FIELDS
 from .merge import three_way
@@ -33,6 +34,7 @@ class KeepSync:
         self.master_token = master_token
         self.state_path = state_path
         self.keep = None
+        self.media_failed = set()  # blobs Google would not serve: not retried until restart
 
     # ---------- session ----------
     def _login(self):
@@ -87,6 +89,18 @@ class KeepSync:
         except Exception:
             return None
 
+    @staticmethod
+    def _media(node):
+        """Images and drawings of a note (read-only in Rosk; audio is not shown)."""
+        out = []
+        for blob in node.images + node.drawings:
+            b = blob.blob
+            out.append({"id": blob.id, "type": b.type.name.upper(),
+                        "mimetype": getattr(b, "_mimetype", None) or "image/png",
+                        "width": getattr(b, "width", None) or 0,
+                        "height": getattr(b, "height", None) or 0})
+        return json.dumps(out)
+
     # ---------- pull ----------
     def _pull(self):
         with self.store.tx():
@@ -125,18 +139,19 @@ class KeepSync:
     def _apply(self, node, labels):
         rf = self._remote_fields(node, labels)
         updated = self._updated(node)
+        media = self._media(node)
         local = self.store.item_by_remote("note", node.id)
         if local is None:
             stamps = {"created_at": updated, "updated_at": updated} if updated else {}
             self.store.insert_item(kind="note", remote_id=node.id, base_json=json.dumps(rf),
-                                   remote_updated=updated, **stamps, **rf)
+                                   remote_updated=updated, media_json=media, **stamps, **rf)
             return
         ops = self.store.pending_ops("item", local["id"])
         if local["deleted"] and "delete" in ops:
             return
         if not ops:
             self.store.update_item(local["id"], touch=False, base_json=json.dumps(rf),
-                                   remote_updated=updated, deleted=0, **rf)
+                                   remote_updated=updated, deleted=0, media_json=media, **rf)
             return
         base = json.loads(local["base_json"] or "{}")
         remote_newer = (updated or "") > (local["updated_at"] or "")
@@ -145,7 +160,7 @@ class KeepSync:
             self.store.remember(local["id"], "conflict", {"local": {f: l for f, l, _ in conflicts},
                                                           "remote": {f: v for f, _, v in conflicts}})
         self.store.update_item(local["id"], touch=False, base_json=json.dumps(rf),
-                               remote_updated=updated, **changes)
+                               remote_updated=updated, media_json=media, **changes)
 
     # ---------- push ----------
     def _push(self):
@@ -291,4 +306,46 @@ class KeepSync:
             self.keep.sync()
             self._commit(handled)
         self._save_state()
+        self._fetch_media()
         return len(handled)
+
+    # ---------- media ----------
+    MEDIA_PER_SYNC = 60  # the first sync of a big account spreads the downloads out
+
+    def _fetch_media(self):
+        """Downloads images that are not on disk yet and removes the ones no note has."""
+        media_dir = self.state_path.parent / "media"  # config.media_path() reads from here
+        media_dir.mkdir(exist_ok=True)
+        wanted = {}
+        for row in self.store.conn.execute(
+                "SELECT remote_id, media_json FROM item WHERE kind='note' AND remote_id IS NOT NULL"
+                " AND deleted=0 AND media_json != '[]' ORDER BY updated_at DESC"):
+            for m in json.loads(row["media_json"]):
+                wanted[m["id"].replace("/", "_")] = (row["remote_id"], m["id"])
+        for f in media_dir.iterdir():
+            if f.name not in wanted:
+                f.unlink(missing_ok=True)
+        fetched = 0
+        for name, (note_id, blob_id) in wanted.items():
+            path = media_dir / name
+            if path.exists() or blob_id in self.media_failed:
+                continue
+            if fetched >= self.MEDIA_PER_SYNC:
+                break
+            node = self.keep.get(note_id)
+            blob = next((b for b in node.blobs if b.id == blob_id), None) if node else None
+            if blob is None:
+                continue
+            try:
+                url = self.keep.getMediaLink(blob)
+                with urllib.request.urlopen(url, timeout=30) as resp:
+                    data = resp.read()
+            except Exception as e:
+                log.warning("cannot download %s: %s", blob_id, e)
+                self.media_failed.add(blob_id)
+                continue
+            tmp = media_dir / (name + ".part")
+            tmp.write_bytes(data)
+            tmp.replace(path)
+            fetched += 1
+        return fetched

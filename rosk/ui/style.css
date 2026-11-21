@@ -95,3 +95,5 @@ button.chip { min-height: 0; min-width: 0; }
 .quick-window entry { min-height: 44px; font-size: 1.15em; }
 
 .empty-hint { opacity: 0.5; }
+.note-card > .note-image:first-child { margin: -10px -12px 4px -12px; }
+.editor-image { border-radius: 12px; }

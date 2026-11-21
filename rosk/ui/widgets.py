@@ -2,10 +2,73 @@
 
 import json
 
-from gi.repository import Gdk, GLib, GObject, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, GLib, GObject, Gtk, Pango
 
+from .. import config
 from ..core import dates
 from ..i18n import _, ngettext
+
+_textures = {}  # (path, mtime, width) -> Gdk.Texture: cards are rebuilt often
+
+
+def note_media(item):
+    """Paths of a note's downloaded images, in Keep's order; missing ones are skipped."""
+    paths = []
+    for m in json.loads(item.get("media_json") or "[]"):
+        path = config.media_path(m["id"])
+        if path.exists():
+            paths.append(path)
+    return paths
+
+
+def media_texture(path, width, max_ratio=None):
+    """The image scaled down to `width` pixels, so big photos stay cheap to draw.
+    With max_ratio, an image taller than width * max_ratio is cropped around its middle."""
+    try:
+        key = (str(path), path.stat().st_mtime, width, max_ratio)
+    except OSError:
+        return None
+    if key not in _textures:
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(path))
+            pixbuf = pixbuf.apply_embedded_orientation() or pixbuf
+            w, h = pixbuf.get_width(), pixbuf.get_height()
+            if max_ratio and h > w * max_ratio:
+                keep = round(w * max_ratio)
+                pixbuf = pixbuf.new_subpixbuf(0, (h - keep) // 2, w, keep)
+                h = keep
+            if w > width:
+                pixbuf = pixbuf.scale_simple(width, max(1, round(h * width / w)),
+                                             GdkPixbuf.InterpType.BILINEAR)
+            _textures[key] = Gdk.Texture.new_for_pixbuf(pixbuf)
+        except GLib.Error:
+            _textures[key] = None
+    return _textures[key]
+
+
+class AspectPicture(Gtk.Picture):
+    """A picture that takes the full width it is given and the height of its aspect ratio.
+    Gtk.Picture with can_shrink reports no useful height, so masonry cards collapsed it."""
+
+    def do_get_request_mode(self):
+        return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH
+
+    def do_measure(self, orientation, for_size):
+        tex = self.get_paintable()
+        w, h = max(1, tex.get_intrinsic_width()), max(1, tex.get_intrinsic_height())
+        if orientation == Gtk.Orientation.HORIZONTAL:
+            return 24, w, -1, -1  # 24: room for the card's negative margins
+        height = max(24, round((for_size if for_size > 0 else w) * h / w))
+        return height, height, -1, -1
+
+
+def media_picture(path, width, max_ratio=None):
+    texture = media_texture(path, width, max_ratio)
+    if texture is None:
+        return None
+    pic = AspectPicture(paintable=texture, content_fit=Gtk.ContentFit.COVER, can_shrink=True)
+    pic.add_css_class("note-image")
+    return pic
 
 
 def chip(text, *classes, icon=None, tooltip=None):
@@ -163,6 +226,9 @@ class NoteCard(Gtk.Box):
             pin.set_opacity(0.55)
             pin.set_valign(Gtk.Align.START)
             head.append(pin)
+        media = note_media(item)
+        if media and (pic := media_picture(media[0], 520, max_ratio=1.3)) is not None:
+            self.append(pic)
         if item["title"] or item["pinned"]:
             self.append(head)
 
@@ -173,6 +239,9 @@ class NoteCard(Gtk.Box):
         elif not item["title"]:
             self.append(self._label(_("Empty note"), "dim-label"))
 
+        if len(media) > 1:
+            self.append(self._label(ngettext("+ {} image", "+ {} images", len(media) - 1)
+                                    .format(len(media) - 1), "note-more"))
         if label_titles:
             self.append(self._label(" · ".join(label_titles), "note-labels", lines=2))
 

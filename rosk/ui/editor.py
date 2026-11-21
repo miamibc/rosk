@@ -3,11 +3,11 @@
 import json
 from datetime import date, timedelta
 
-from gi.repository import Adw, Gdk, GLib, GObject, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 
 from ..core import dates
 from ..i18n import _, ngettext
-from .widgets import link_icon
+from .widgets import link_icon, media_picture, note_media
 
 NOTE_COLORS = ["DEFAULT", "RED", "ORANGE", "YELLOW", "GREEN", "TEAL", "BLUE", "CERULEAN",
                "PURPLE", "PINK", "BROWN", "GRAY"]
@@ -342,6 +342,22 @@ class Editor(Gtk.Box):
     # ---------- note ----------
     def _build_note(self, item):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
+        media = note_media(item)
+        if media:
+            pics = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            for path in media:
+                pic = media_picture(path, 900)
+                if pic is None:
+                    continue
+                pic.add_css_class("editor-image")
+                pic.set_cursor_from_name("pointer")
+                pic.set_tooltip_text(_("Open the image"))
+                click = Gtk.GestureClick()
+                click.connect("released", lambda *_a, p=path: Gtk.FileLauncher.new(
+                    Gio.File.new_for_path(str(p))).launch(self.get_root(), None, None, None))
+                pic.add_controller(click)
+                pics.append(pic)
+            box.append(pics)
         box.append(self._title_entry(item, _("Title")))
         self.is_checklist = item["checklist_json"] is not None
         if self.is_checklist:

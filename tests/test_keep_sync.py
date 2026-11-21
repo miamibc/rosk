@@ -114,3 +114,49 @@ def test_tasks_untouched_by_keep(env):
     ks.sync()
     assert len(keep.all()) == 0
     assert repo.store.pending_count() == 2  # list create + task create stay for Tasks sync
+
+
+def _add_image(note, blob_id="1a1da2ee615.81daed8ee6bfd185"):
+    blob = gkeepapi.node.from_json({
+        "id": blob_id, "kind": "notes#node", "type": "BLOB", "parentId": note.id,
+        "sortValue": 1, "text": "", "serverId": "srv-" + blob_id,
+        "timestamps": {"kind": "notes#timestamps", "created": "2026-11-21T10:00:00.000Z",
+                       "updated": "2026-11-21T10:00:00.000Z"},
+        "nodeSettings": {"newListItemPlacement": "BOTTOM", "graveyardState": "COLLAPSED",
+                         "checkedListItemsPolicy": "GRAVEYARD"},
+        "annotationsGroup": {"kind": "notes#annotationsGroup"},
+        "blob": {"kind": "notes#blob", "type": "IMAGE", "mimetype": "image/jpeg",
+                 "width": 476, "height": 476, "byte_size": 4, "extracted_text": "",
+                 "extraction_status": "VSS_FAILED"}})
+    note.append(blob, True)
+    return blob
+
+
+def test_images_pulled_and_downloaded(env, monkeypatch, tmp_path):
+    import io
+    import urllib.request
+    keep, repo, ks = env
+    note = keep.createNote("Wallet", "text")
+    blob = _add_image(note)
+    keep.getMediaLink = lambda b: "https://example.invalid/" + b.id
+    fetched = []
+
+    def urlopen(url, timeout=None):
+        fetched.append(url)
+        return io.BytesIO(b"\xff\xd8\xff\xe0")
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+
+    ks.sync()
+    row = repo.store.item_by_remote("note", note.id)
+    assert json.loads(row["media_json"]) == [{"id": blob.id, "type": "IMAGE", "mimetype": "image/jpeg",
+                                              "width": 476, "height": 476}]
+    media = tmp_path / "media"
+    assert (media / blob.id).read_bytes() == b"\xff\xd8\xff\xe0"
+    assert sorted(p.name for p in media.iterdir()) == [blob.id]
+
+    ks.sync()  # already on disk: not downloaded again
+    assert len(fetched) == 1
+
+    note.trash()
+    ks.sync()  # the note is gone: so is its image
+    assert list(media.iterdir()) == []

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rosk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 18:19+0200\n"
+"POT-Creation-Date: 2026-11-21 18:30+0200\n"
 "PO-Revision-Date: 2026-11-20 17:00+0200\n"
 "Last-Translator: Rosk developers\n"
 "Language-Team: Russian\n"
@@ -187,7 +187,7 @@ msgid "Tomorrow"
 msgstr "Завтра"
 
 #: rosk/service/dbus.py:83 rosk/service/dbus.py:202 rosk/store/repo.py:332
-#: rosk/ui/editor.py:279 rosk/ui/widgets.py:61 rosk/ui/window.py:556
+#: rosk/ui/editor.py:279 rosk/ui/widgets.py:124 rosk/ui/window.py:556
 #: rosk/ui/window.py:704
 msgid "Untitled"
 msgstr "Без названия"
@@ -354,7 +354,7 @@ msgstr "Список"
 msgid "Subtask of"
 msgstr "Подзадача"
 
-#: rosk/ui/editor.py:248 rosk/ui/widgets.py:81
+#: rosk/ui/editor.py:248 rosk/ui/widgets.py:144
 msgid "Subtasks"
 msgstr "Подзадачи"
 
@@ -378,51 +378,55 @@ msgstr "Без срока"
 msgid "Next week"
 msgstr "След. неделя"
 
-#: rosk/ui/editor.py:345
+#: rosk/ui/editor.py:354
+msgid "Open the image"
+msgstr "Открыть изображение"
+
+#: rosk/ui/editor.py:361
 msgid "Title"
 msgstr "Заголовок"
 
-#: rosk/ui/editor.py:354
+#: rosk/ui/editor.py:370
 msgid "Write a note…"
 msgstr "Текст заметки…"
 
-#: rosk/ui/editor.py:357
+#: rosk/ui/editor.py:373
 msgid "Checklist"
 msgstr "Список с флажками"
 
-#: rosk/ui/editor.py:361 rosk/ui/window.py:179
+#: rosk/ui/editor.py:377 rosk/ui/window.py:179
 msgid "Pinned"
 msgstr "Закреплена"
 
-#: rosk/ui/editor.py:365
+#: rosk/ui/editor.py:381
 msgid "Archived"
 msgstr "В архиве"
 
-#: rosk/ui/editor.py:372
+#: rosk/ui/editor.py:388
 msgid "Color"
 msgstr "Цвет"
 
-#: rosk/ui/editor.py:392 rosk/ui/window.py:265
+#: rosk/ui/editor.py:408 rosk/ui/window.py:265
 msgid "Labels"
 msgstr "Метки"
 
-#: rosk/ui/editor.py:398
+#: rosk/ui/editor.py:414
 msgid "New label"
 msgstr "Новая метка"
 
-#: rosk/ui/editor.py:446
+#: rosk/ui/editor.py:462
 msgid "Drag to move"
 msgstr "Перетащите, чтобы переместить"
 
-#: rosk/ui/editor.py:461
+#: rosk/ui/editor.py:477
 msgid "Remove"
 msgstr "Убрать"
 
-#: rosk/ui/editor.py:479
+#: rosk/ui/editor.py:495
 msgid "Add item"
 msgstr "Добавить пункт"
 
-#: rosk/ui/editor.py:488
+#: rosk/ui/editor.py:504
 msgid "Load more ({})"
 msgstr "Показать ещё ({})"
 
@@ -632,23 +636,30 @@ msgstr "Enter — сохранить · Shift+Enter — добавить ещё 
 msgid "Click to keep as text"
 msgstr "Нажмите, чтобы оставить текстом"
 
-#: rosk/ui/widgets.py:55
+#: rosk/ui/widgets.py:118
 msgid "Mark as done"
 msgstr "Отметить выполненной"
 
-#: rosk/ui/widgets.py:87
+#: rosk/ui/widgets.py:150
 msgid "Open source"
 msgstr "Открыть источник"
 
-#: rosk/ui/widgets.py:92
+#: rosk/ui/widgets.py:155
 msgid "Assigned"
 msgstr "Назначена"
 
-#: rosk/ui/widgets.py:174
+#: rosk/ui/widgets.py:240
 msgid "Empty note"
 msgstr "Пустая заметка"
 
-#: rosk/ui/widgets.py:209
+#: rosk/ui/widgets.py:243
+msgid "+ {} image"
+msgid_plural "+ {} images"
+msgstr[0] "ещё {} изображение"
+msgstr[1] "ещё {} изображения"
+msgstr[2] "ещё {} изображений"
+
+#: rosk/ui/widgets.py:278
 msgid "+ {} more"
 msgstr "и ещё {}"
 

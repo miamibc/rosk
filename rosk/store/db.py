@@ -10,7 +10,7 @@ import threading
 import uuid
 from datetime import datetime, timezone
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS item (
     -- read-only data from Google
     links_json TEXT NOT NULL DEFAULT '[]',
     web_view_link TEXT,
+    -- Keep images and drawings: [{"id", "type", "mimetype", "width", "height"}]
+    media_json TEXT NOT NULL DEFAULT '[]',
     assignment_json TEXT,
     hidden INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL,
@@ -109,7 +111,16 @@ def connect(path):
     row = conn.execute("SELECT value FROM meta WHERE key='schema'").fetchone()
     if row is None:
         conn.execute("INSERT INTO meta VALUES ('schema', ?)", (str(SCHEMA_VERSION),))
+    elif int(row["value"]) < SCHEMA_VERSION:
+        migrate(conn, int(row["value"]))
     return conn
+
+
+def migrate(conn, version):
+    columns = {r["name"] for r in conn.execute("PRAGMA table_info(item)")}
+    if version < 2 and "media_json" not in columns:
+        conn.execute("ALTER TABLE item ADD COLUMN media_json TEXT NOT NULL DEFAULT '[]'")
+    conn.execute("UPDATE meta SET value=? WHERE key='schema'", (str(SCHEMA_VERSION),))
 
 
 class Tx:

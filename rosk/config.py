@@ -19,6 +19,11 @@ def db_path() -> Path:
     return data_dir() / "rosk.db"
 
 
+def media_path(blob_id: str) -> Path:
+    """A downloaded Keep image (KeepSync puts them in media/ next to keep-state.json)."""
+    return data_dir() / "media" / blob_id.replace("/", "_")
+
+
 def package_dir() -> Path:
     return Path(__file__).resolve().parent
 
