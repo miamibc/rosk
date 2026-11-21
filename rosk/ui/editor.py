@@ -7,7 +7,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 
 from ..core import dates
 from ..i18n import _, ngettext
-from .widgets import insertion_indicator, link_icon, media_picture, note_media
+from .widgets import drag_source, insertion_indicator, link_icon, media_picture, note_media
 
 NOTE_COLORS = ["DEFAULT", "RED", "ORANGE", "YELLOW", "GREEN", "TEAL", "BLUE", "CERULEAN",
                "PURPLE", "PINK", "BROWN", "GRAY"]
@@ -471,7 +471,7 @@ class Editor(Gtk.Box):
         handle.set_tooltip_text(_("Drag to move"))
         src = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
         src.connect("prepare", lambda *_a: Gdk.ContentProvider.new_for_value(f"check:{idx}"))
-        src.connect("drag-begin", lambda s, _d: s.set_icon(Gtk.WidgetPaintable.new(row), 20, 20))
+        drag_source(src, row)
         handle.add_controller(src)
         h.append(handle)
         cb = Gtk.CheckButton(active=bool(entry.get("checked")))

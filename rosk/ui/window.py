@@ -11,7 +11,7 @@ from ..sync import manager as sync_state
 from .complete import TagCompleter
 from .masonry import Masonry
 from .editor import Debounce, Editor
-from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state, insertion_indicator, note_media
+from .widgets import GroupHeader, NoteCard, TaskRow, chip, drag_source, empty_state, insertion_indicator, note_media
 
 TODAY, UPCOMING, ALL, NOTES, COMPLETED, ARCHIVE, SEARCH = (
     "today", "upcoming", "all", "notes", "completed", "archive", "search")
@@ -728,7 +728,7 @@ class MainWindow(Adw.ApplicationWindow):
     def _make_draggable(self, row):
         src = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
         src.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(row.item_id))
-        src.connect("drag-begin", lambda s, _d: s.set_icon(Gtk.WidgetPaintable.new(row), 20, 20))
+        drag_source(src, row)
         row.add_controller(src)
         if self.view.startswith("list:") or self.view == ALL:
             target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE)

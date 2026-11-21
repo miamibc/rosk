@@ -87,6 +87,18 @@ def chip(text, *classes, icon=None, tooltip=None):
     return box
 
 
+def drag_source(src, row):
+    """Drag icon: a still image of `row` taken when the drag starts. A live WidgetPaintable
+    would also show the drop line drawn on the row while the pointer is over it."""
+    def begin(s, _drag):
+        row.add_css_class("drag-source")
+        image = Gtk.WidgetPaintable.new(row).get_current_image()
+        s.set_icon(image, 20, 20)
+
+    src.connect("drag-begin", begin)
+    src.connect("drag-end", lambda *_a: row.remove_css_class("drag-source"))
+
+
 def insertion_indicator(row, target):
     """While something is dragged over `row`, draws a line in the gap above or below it (the
     upper or lower half, as the drop handlers decide) instead of highlighting the row itself.
@@ -98,6 +110,9 @@ def insertion_indicator(row, target):
         row.remove_css_class("drop-after")
 
     def motion(_t, _x, y):
+        if row.has_css_class("drag-source"):  # dropping an item on itself changes nothing
+            clear()
+            return Gdk.DragAction.MOVE
         before = y < row.get_height() / 2
         row.add_css_class("drop-before" if before else "drop-after")
         row.remove_css_class("drop-after" if before else "drop-before")
