@@ -7,7 +7,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 
 from ..core import dates
 from ..i18n import _, ngettext
-from .widgets import link_icon, media_picture, note_media
+from .widgets import insertion_indicator, link_icon, media_picture, note_media
 
 NOTE_COLORS = ["DEFAULT", "RED", "ORANGE", "YELLOW", "GREEN", "TEAL", "BLUE", "CERULEAN",
                "PURPLE", "PINK", "BROWN", "GRAY"]
@@ -489,7 +489,8 @@ class Editor(Gtk.Box):
         h.append(rm)
         row.set_child(h)
         target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE)
-        target.connect("drop", self._check_drop, row, idx)
+        clear = insertion_indicator(row, target)
+        target.connect("drop", lambda *a: (clear(), self._check_drop(*a, row, idx))[1])
         row.add_controller(target)
         self._check_entry_widgets[idx] = e
         return row

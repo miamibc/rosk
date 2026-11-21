@@ -11,7 +11,7 @@ from ..sync import manager as sync_state
 from .complete import TagCompleter
 from .masonry import Masonry
 from .editor import Debounce, Editor
-from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state, note_media
+from .widgets import GroupHeader, NoteCard, TaskRow, chip, empty_state, insertion_indicator, note_media
 
 TODAY, UPCOMING, ALL, NOTES, COMPLETED, ARCHIVE, SEARCH = (
     "today", "upcoming", "all", "notes", "completed", "archive", "search")
@@ -732,7 +732,8 @@ class MainWindow(Adw.ApplicationWindow):
         row.add_controller(src)
         if self.view.startswith("list:") or self.view == ALL:
             target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE)
-            target.connect("drop", self._on_drop_row, row)
+            clear = insertion_indicator(row, target)
+            target.connect("drop", lambda *a: (clear(), self._on_drop_row(*a, row))[1])
             row.add_controller(target)
 
     def _on_drop_row(self, _t, value, _x, y, target_row):

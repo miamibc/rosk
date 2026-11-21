@@ -87,6 +87,28 @@ def chip(text, *classes, icon=None, tooltip=None):
     return box
 
 
+def insertion_indicator(row, target):
+    """While something is dragged over `row`, draws a line in the gap above or below it (the
+    upper or lower half, as the drop handlers decide) instead of highlighting the row itself.
+    The drop handler should call the returned function to clear the line."""
+    row.add_css_class("drop-line")
+
+    def clear(*_a):
+        row.remove_css_class("drop-before")
+        row.remove_css_class("drop-after")
+
+    def motion(_t, _x, y):
+        before = y < row.get_height() / 2
+        row.add_css_class("drop-before" if before else "drop-after")
+        row.remove_css_class("drop-after" if before else "drop-before")
+        return Gdk.DragAction.MOVE
+
+    target.connect("enter", motion)
+    target.connect("motion", motion)
+    target.connect("leave", clear)
+    return clear
+
+
 def due_chip(due):
     state = dates.due_state(due)
     return chip(dates.chip_text(due), state or "", icon="alarm-symbolic",
