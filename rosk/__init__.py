@@ -3,7 +3,7 @@
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 APP_ID = "io.github.miamibc.rosk"
 DBUS_PATH = "/io/github/miamibc/rosk"
 SERVICE_IFACE = "io.github.miamibc.rosk.Service"
