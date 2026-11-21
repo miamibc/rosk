@@ -13,7 +13,7 @@ KEY=$2
 URL=$3
 shift 3
 
-SIGN="--batch --yes --local-user $KEY"
+SIGN="--batch --yes --local-user $KEY --digest-algo SHA512"  # not SHA-1 from old key prefs
 if [ -n "${GPG_PASSPHRASE_FILE:-}" ]; then
     SIGN="$SIGN --pinentry-mode loopback --passphrase-file $GPG_PASSPHRASE_FILE"
 fi
