@@ -205,6 +205,7 @@ class KeepSync:
                                                                 for e in entries])
                 else:
                     node = self.keep.createNote(item["title"], item["body"])
+                node.sort = self._top_sort(node)
             else:
                 node.title = item["title"]
                 if want_list:
@@ -232,6 +233,14 @@ class KeepSync:
                     node.labels.add(ln)
             handled.append(("item", op, item["id"], node.id))
         return handled
+
+    SORT_STEP = 1 << 20  # the gap Keep's own clients leave between notes
+
+    def _top_sort(self, new_node):
+        """Keep orders notes by sortValue, not by date. gkeepapi picks a random one, which
+        buries a new note somewhere in the middle; Keep's clients put it above the current top."""
+        top = max((n.sort for n in self.keep.all() if n is not new_node), default=0)
+        return top + self.SORT_STEP
 
     @staticmethod
     def _sync_list_items(node, entries, gkeepapi):

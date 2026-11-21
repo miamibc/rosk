@@ -51,6 +51,19 @@ def test_local_note_pushed(env):
     assert repo.store.pending_count() == 0
 
 
+def test_new_notes_go_on_top(env):
+    keep, repo, ks = env
+    for i in range(5):
+        keep.createNote(f"old {i}", "").sort = 9_000_000_000 - i
+    ks.sync()
+    first = repo.quick_add("n: first")
+    second = repo.quick_add("n: second")
+    ks.sync()
+    order = [n.title for n in sorted(keep.all(), key=lambda n: -n.sort)]
+    assert order[:3] == ["second", "first", "old 0"]
+    assert repo.item(first)["remote_id"] and repo.item(second)["remote_id"]
+
+
 def test_local_edit_and_remote_edit_merge(env):
     keep, repo, ks = env
     n = keep.createNote("T", "B")
