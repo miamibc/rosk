@@ -2,8 +2,13 @@
 """Prints the next release version (minor + 1: 0.1.0 -> 0.2.0, 0.9.0 -> 0.10.0) and, with
 --write, puts it into every file that carries the version.
 
-    python3 tools/bump_version.py           # prints the next version
-    python3 tools/bump_version.py --write   # also writes it
+    python3 tools/bump_version.py             # prints the next version
+    python3 tools/bump_version.py --write     # also writes it
+    python3 tools/bump_version.py --current   # prints the current one
+
+The version is read from the text of rosk/__init__.py, never by importing it: an import leaves
+a .pyc behind, and a rewrite in the same second with the same length ("0.1.0" -> "0.2.0") is
+not noticed by Python, so a later import would still see the old version.
 """
 
 import re
@@ -39,6 +44,9 @@ def write(version):
 
 
 def main():
+    if "--current" in sys.argv[1:]:
+        print(".".join(map(str, current())))
+        return
     version = next_version(current())
     if "--write" in sys.argv[1:]:
         write(version)
