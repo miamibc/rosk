@@ -53,17 +53,16 @@ def test_polls_are_quiet_unless_a_change_joins(mgr):
     assert [q for _t, q in starts] == [True, False]
 
 
-def test_focus_syncs_only_when_stale(mgr):
+def test_focus_syncs_what_is_older_than_the_active_interval(mgr):
     _repo, m, starts = mgr
-    m.last_sync = time.time()
+    m._idle_seconds = lambda: 0
+    now = time.time()
+    m.last = {manager.KEEP: now - 3 * 60, manager.TASKS: now - 3 * 60, manager.LISTS: now - 3 * 60}
+    assert m.due_parts() == set()  # in other apps: nothing due after 3 minutes
     m.set_active(True)
     run_loop(50)
-    assert starts == []  # synced a moment ago
-    m.set_active(False)
-    m.last_sync = time.time() - manager.FOCUS_MIN_AGE - 1
-    m.set_active(True)
-    run_loop(50)
-    assert [q for _t, q in starts] == [True]
+    assert [q for _t, q in starts] == [True]  # Keep (2 min when active) is due: quietly
+    assert m.due_parts() == {manager.KEEP}
 
 
 def test_fingerprint_sees_only_real_changes(tmp_path):
@@ -95,48 +94,48 @@ def test_mode_follows_the_user(mgr):
     assert m.mode() == manager.AWAY
 
 
-def test_heartbeat_polls_by_mode(mgr):
-    _repo, m, starts = mgr
+def test_each_part_has_its_own_clock(mgr):
+    _repo, m, _starts = mgr
     idle = [0]
     m._idle_seconds = lambda: idle[0]
     m.active = False
+    now = time.time()
+    m.last = {manager.KEEP: now - 11 * 60, manager.TASKS: now - 11 * 60, manager.LISTS: now - 11 * 60}
+    assert m.due_parts() == {manager.KEEP}  # notes after 10 min, tasks only after 15
+    m.last[manager.TASKS] = now - 16 * 60
+    assert m.due_parts() == {manager.KEEP, manager.TASKS}  # the lists themselves wait for 30
+    m.last[manager.LISTS] = now - 31 * 60
+    assert manager.LISTS in m.due_parts()
 
-    m.last_sync = time.time() - manager.PRESENT_INTERVAL + 30
-    m._heartbeat()
-    run_loop(20)
-    assert starts == []  # not due yet
-    m.last_sync = time.time() - manager.PRESENT_INTERVAL
-    m._heartbeat()
-    run_loop(20)
-    assert len(starts) == 1
-
-    idle[0] = manager.AWAY_IDLE  # away: an hour between polls
-    m.last_sync = time.time() - manager.PRESENT_INTERVAL * 2
-    m._heartbeat()
-    run_loop(20)
-    assert len(starts) == 1
-
-    idle[0] = 0  # back at the computer after a while: catch up at once
-    m.last_sync = time.time() - manager.RETURN_MIN_AGE - 1
-    m._heartbeat()
-    run_loop(20)
-    assert len(starts) == 2 and starts[-1][1] is True  # quietly
+    idle[0] = manager.AWAY_IDLE  # away: an hour for both, two for the lists
+    assert m.due_parts() == set()
+    m.locked, idle[0] = False, 0  # back: what is older than the "other apps" clocks is due
+    assert m.due_parts() == {manager.KEEP, manager.TASKS, manager.LISTS}
 
 
-def test_polls_reread_task_lists_every_other_time(mgr):
+def test_changes_sync_only_their_part(mgr):
     repo, m, _starts = mgr
     m._idle_seconds = lambda: 0
-    m.active = False
-    interval = manager.PRESENT_INTERVAL
-    m._quiet = True
-    m.last_lists_sync = time.time() - interval  # one poll ago
-    assert m._wants_lists() is False
-    m.last_lists_sync = time.time() - 2 * interval
-    assert m._wants_lists() is True
+    now = time.time()
+    m.last = {p: now for p in m.last}
+    m._force = False
+    assert m._choose_parts() == set()  # nothing due, nothing waiting
+    repo.quick_add("n: a note")
+    assert m._choose_parts() == {manager.KEEP}
+    repo.store.conn.execute("DELETE FROM outbox")
+    repo.quick_add("a task")  # its list is new too (Inbox), so the lists are re-read
+    assert manager.TASKS in m._choose_parts()
+    m._force = True  # Refresh button
+    assert m._choose_parts() == {manager.KEEP, manager.TASKS, manager.LISTS}
 
-    m.last_lists_sync = time.time()
-    m._quiet = False  # Refresh button or a push
-    assert m._wants_lists() is True
-    m._quiet = True
-    repo.create_collection("tasklist", "New")  # a new list waits to be sent
-    assert m._wants_lists() is True
+
+def test_skipped_tasks_keep_their_status(mgr, monkeypatch, tmp_path):
+    _repo, m, _starts = mgr
+    monkeypatch.setenv("ROSK_DATA_DIR", str(tmp_path / "data"))  # _run opens config.db_path()
+    m._sync_tasks = lambda store, lists=True: (_ for _ in ()).throw(AssertionError("Tasks called"))
+    m._sync_keep = lambda store: None
+    m._tasks_state = (manager.NO_ACCOUNT, "no account")
+    got = []
+    monkeypatch.setattr(GLib, "idle_add", lambda fn, *a: got.append(a))
+    m._run({manager.KEEP})
+    assert got[0][:2] == (manager.NO_ACCOUNT, "no account")
