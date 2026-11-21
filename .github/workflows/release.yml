@@ -7,16 +7,20 @@ on:
 
 jobs:
   test:
+    # The same checks as `make check` before a commit. Rosk runs on the system PyGObject
+    # (a PyPI build would need the GLib headers), so the venv is made like `make venv` does it.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install
-        run: pip install -r requirements.txt pytest
-      - name: Test
-        run: python -m pytest -q tests
+      - name: System packages
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            python3-gi python3-venv gir1.2-glib-2.0 libglib2.0-bin gettext
+      - name: Venv
+        run: make venv PYTHON=/usr/bin/python3
+      - name: Check
+        run: make check
 
   dist:
     needs: test
