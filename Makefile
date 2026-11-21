@@ -19,7 +19,7 @@ DEV_ENV   = ROSK_APP_ID=$(APP_ID).Dev ROSK_DATA_DIR=$(CURDIR)/build/dev-data
 SERVICE   = --session --dest $(APP_ID) --object-path /io/github/miamibc/rosk
 
 .DEFAULT_GOAL := help
-.PHONY: help venv run run-offline test lint check pot locale screenshots check-deps install \
+.PHONY: help venv run run-offline test lint check pot locale screenshots check-deps install deb \
 	uninstall restart start quit status sync logs dist clean
 
 help:  ## Show this help
@@ -161,6 +161,9 @@ logs:  ## Recent log lines of the service and the Shell extension
 	@journalctl --user -b -o short-iso --no-pager 2>/dev/null | grep -i rosk | tail -n 40 || true
 
 # ---------- release ----------
+
+deb: locale $(VENV)  ## Debian package in dist/ (system-wide, /usr), see tools/build_deb.sh
+	sh tools/build_deb.sh $(VERSION) $(VENV)
 
 dist:  ## Source archive in dist/
 	mkdir -p dist

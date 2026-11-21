@@ -82,6 +82,36 @@ class RoskApp(Adw.Application):
         self.sync.request(1)
         GLib.timeout_add_seconds(60, self._minute_tick)
         GLib.idle_add(self._minute_tick)
+        GLib.idle_add(self._enable_extension_once)
+
+    def _enable_extension_once(self):
+        """A .deb installs the Shell extension for everyone, but turning it on is per user: do it
+        at the first start (make install does it itself). Only once, and not when the user has
+        turned it off before, so a later "off" in Extensions stays off."""
+        from .service.tray import EXTENSION_UUID as uuid
+
+        store = self.repo.store
+        if store.get_meta("extension_enabled_once") or os.environ.get("ROSK_DATA_DIR"):
+            return False
+        bases = [GLib.get_user_data_dir(), *GLib.get_system_data_dirs()]
+        if not any((Path(b) / "gnome-shell" / "extensions" / uuid).is_dir() for b in bases):
+            return False  # not installed (yet): try again at the next start
+        source = Gio.SettingsSchemaSource.get_default()
+        schema = source.lookup("org.gnome.shell", True) if source else None
+        if schema is None or not schema.has_key("enabled-extensions"):
+            return False  # not GNOME Shell
+        with store.tx():
+            store.set_meta("extension_enabled_once", "1")
+        shell = Gio.Settings.new("org.gnome.shell")
+        if uuid in shell.get_strv("disabled-extensions") or uuid in shell.get_strv("enabled-extensions"):
+            return False
+        shell.set_strv("enabled-extensions", [*shell.get_strv("enabled-extensions"), uuid])
+        conn = self.get_dbus_connection()
+        if conn is not None:  # right away if the Shell already knows it, else at the next login
+            conn.call("org.gnome.Shell.Extensions", "/org/gnome/Shell/Extensions",
+                      "org.gnome.Shell.Extensions", "EnableExtension", GLib.Variant("(s)", (uuid,)),
+                      None, Gio.DBusCallFlags.NONE, -1, None, None)
+        return False
 
     def do_shutdown(self):
         if self.window:

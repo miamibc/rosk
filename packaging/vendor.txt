@@ -1,0 +1,6 @@
+# Python packages shipped inside the .deb (/usr/lib/rosk/vendor): Ubuntu has no gkeepapi and only
+# an old gpsoauth. All pure Python, so the package stays Architecture: all. Their other
+# dependencies (pycryptodomex as Cryptodome, requests, urllib3) come from apt, see control.in.
+gkeepapi==0.17.1
+gpsoauth==3.0.1
+future==1.0.0
