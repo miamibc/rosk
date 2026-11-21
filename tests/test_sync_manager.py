@@ -78,3 +78,46 @@ def test_fingerprint_sees_only_real_changes(tmp_path):
     with store.tx():
         store.update_item(iid, touch=False, title="b", remote_updated="2026-11-21T10:00:00.000Z")
     assert fingerprint(store) != before
+
+
+def test_mode_follows_the_user(mgr):
+    _repo, m, _starts = mgr
+    idle = [0]
+    m._idle_seconds = lambda: idle[0]
+    m.locked = False
+    assert m.mode() == manager.PRESENT
+    m.active = True
+    assert m.mode() == manager.ACTIVE
+    idle[0] = manager.AWAY_IDLE
+    assert m.mode() == manager.AWAY  # the window stays focused, but nobody is there
+    idle[0] = 0
+    m.locked = True
+    assert m.mode() == manager.AWAY
+
+
+def test_heartbeat_polls_by_mode(mgr):
+    _repo, m, starts = mgr
+    idle = [0]
+    m._idle_seconds = lambda: idle[0]
+    m.active = False
+
+    m.last_sync = time.time() - manager.PRESENT_INTERVAL + 30
+    m._heartbeat()
+    run_loop(20)
+    assert starts == []  # not due yet
+    m.last_sync = time.time() - manager.PRESENT_INTERVAL
+    m._heartbeat()
+    run_loop(20)
+    assert len(starts) == 1
+
+    idle[0] = manager.AWAY_IDLE  # away: an hour between polls
+    m.last_sync = time.time() - manager.PRESENT_INTERVAL * 2
+    m._heartbeat()
+    run_loop(20)
+    assert len(starts) == 1
+
+    idle[0] = 0  # back at the computer after a while: catch up at once
+    m.last_sync = time.time() - manager.RETURN_MIN_AGE - 1
+    m._heartbeat()
+    run_loop(20)
+    assert len(starts) == 2 and starts[-1][1] is True  # quietly

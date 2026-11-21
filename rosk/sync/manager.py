@@ -20,9 +20,18 @@ OFFLINE = "offline"
 ERROR = "error"
 NO_ACCOUNT = "no-account"
 
-PUSH_DELAY = 5          # seconds after the last local change before it is sent
-ACTIVE_INTERVAL = 60    # how often to look for remote changes while the window is active
-FOCUS_MIN_AGE = 30      # focusing the window syncs if the last sync is older than this
+# One sync costs about 8 requests (Tasks: the lists + one per list; Keep: one), so polling is
+# paced by what the user is doing. Google's tasklist.updated does not change when a task is
+# only renamed, so a cheaper "has anything changed" check is not reliable.
+PUSH_DELAY = 15          # seconds after the last local change before it is sent
+ACTIVE_INTERVAL = 5 * 60     # the Rosk window is active
+PRESENT_INTERVAL = 15 * 60   # the user works in other apps
+AWAY_INTERVAL = 60 * 60      # idle for AWAY_IDLE or the screen is locked
+AWAY_IDLE = 10 * 60
+FOCUS_MIN_AGE = 2 * 60   # focusing the window syncs if the last sync is older than this
+RETURN_MIN_AGE = 5 * 60  # coming back to the computer syncs if the last sync is older than this
+HEARTBEAT = 60           # local check of what the user is doing; no network
+ACTIVE, PRESENT, AWAY = "active", "present", "away"
 
 
 def fingerprint(store, media_dir=None):
@@ -62,12 +71,16 @@ class SyncManager(GObject.Object):
         self._backoff = 0
         self._quiet = False
         self._again_quiet = False
-        self.interval = 15 * 60
+        self.interval = PRESENT_INTERVAL
         self.active = False
+        self.locked = False
+        self._mode = PRESENT
+        self._idle_proxy = None
         self.enabled = True
         self._monitor = Gio.NetworkMonitor.get_default()
         self._monitor.connect("network-changed", self._on_network)
-        self._schedule_periodic()
+        self._watch_session()
+        self._periodic = GLib.timeout_add_seconds(HEARTBEAT, self._heartbeat)
         # every local change queued for Google pushes PUSH_DELAY seconds after the last one
         repo.store.on_enqueue = self.request
 
@@ -90,17 +103,15 @@ class SyncManager(GObject.Object):
         self.request(0)
 
     def set_interval(self, seconds):
-        if seconds != self.interval:
-            self.interval = seconds
-            self._schedule_periodic()
+        """Polling interval while the user works in other apps."""
+        self.interval = seconds
 
     def set_active(self, active):
-        """The main window is active: poll often and catch up right away."""
+        """The main window is active: poll more often and catch up right away."""
         if active == self.active:
             return
         self.active = active
-        self._schedule_periodic()
-        if active and (self.last_sync is None or time.time() - self.last_sync > FOCUS_MIN_AGE):
+        if active and self._age() > FOCUS_MIN_AGE:
             self.request(0, quiet=True)
 
     @property
@@ -108,15 +119,60 @@ class SyncManager(GObject.Object):
         return self.repo.store.pending_count()
 
     # ---------- internals ----------
-    def _schedule_periodic(self):
-        if self._periodic:
-            GLib.source_remove(self._periodic)
-        self._periodic = GLib.timeout_add_seconds(
-            ACTIVE_INTERVAL if self.active else self.interval, self._tick)
+    def _age(self):
+        return float("inf") if self.last_sync is None else time.time() - self.last_sync
 
-    def _tick(self):
-        self.request(0, quiet=True)
+    def mode(self):
+        if self.locked or self._idle_seconds() >= AWAY_IDLE:
+            return AWAY
+        return ACTIVE if self.active else PRESENT
+
+    def poll_interval(self, mode):
+        return {ACTIVE: ACTIVE_INTERVAL, PRESENT: self.interval, AWAY: AWAY_INTERVAL}[mode]
+
+    def _heartbeat(self):
+        mode = self.mode()
+        came_back = self._mode == AWAY and mode != AWAY
+        self._mode = mode
+        age = self._age()
+        if age >= self.poll_interval(mode) or (came_back and age > RETURN_MIN_AGE):
+            self.request(0, quiet=True)
         return True
+
+    # ---------- what the user is doing (GNOME); unknown means "present" ----------
+    def _watch_session(self):
+        flags = (Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES
+                 | Gio.DBusProxyFlags.DO_NOT_AUTO_START)
+        try:
+            self._idle_proxy = Gio.DBusProxy.new_for_bus_sync(
+                Gio.BusType.SESSION, flags | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None,
+                "org.gnome.Mutter.IdleMonitor", "/org/gnome/Mutter/IdleMonitor/Core",
+                "org.gnome.Mutter.IdleMonitor", None)
+            saver = Gio.DBusProxy.new_for_bus_sync(
+                Gio.BusType.SESSION, flags, None, "org.gnome.ScreenSaver",
+                "/org/gnome/ScreenSaver", "org.gnome.ScreenSaver", None)
+            saver.connect("g-signal", self._on_saver_signal)
+            self._saver = saver
+            self.locked = bool(saver.call_sync("GetActive", None, Gio.DBusCallFlags.NONE,
+                                               1000, None).unpack()[0])
+        except GLib.Error as e:
+            log.info("idle/lock state not available: %s", e.message)
+
+    def _on_saver_signal(self, _proxy, _sender, signal, params):
+        if signal == "ActiveChanged":
+            self.locked = bool(params.unpack()[0])
+            if not self.locked:
+                self._heartbeat()  # unlocked: catch up if it has been a while
+
+    def _idle_seconds(self):
+        if self._idle_proxy is None:
+            return 0
+        try:
+            ms = self._idle_proxy.call_sync("GetIdletime", None, Gio.DBusCallFlags.NONE, 500,
+                                            None).unpack()[0]
+            return ms / 1000
+        except GLib.Error:
+            return 0
 
     def _on_network(self, monitor, available):
         if available:
