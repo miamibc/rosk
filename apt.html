@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Rosk APT repository</title>
+<style>body{font:16px/1.5 sans-serif;max-width:46em;margin:2em auto;padding:0 1em}
+pre{background:#f4f4f4;padding:1em;overflow-x:auto}</style>
+<h1>Rosk APT repository</h1>
+<p>Rosk: quick tasks and notes for GNOME, synced with Google Tasks and Keep.
+Needs GNOME 48 or newer (Ubuntu 25.04+, Debian 13+).
+Source: <a href="https://github.com/miamibc/rosk">github.com/miamibc/rosk</a>.</p>
+<pre>sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://miamibc.github.io/rosk/rosk-archive-keyring.gpg | sudo tee /etc/apt/keyrings/rosk.gpg &gt;/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/rosk.gpg] https://miamibc.github.io/rosk stable main" \
+  | sudo tee /etc/apt/sources.list.d/rosk.list
+sudo apt update
+sudo apt install rosk</pre>
+<p>Updates then come with <code>sudo apt upgrade</code>.
+Or download the latest package directly: <a href="pool/main/r/rosk/rosk_0.2.0_all.deb">rosk_0.2.0_all.deb</a>.</p>
+</html>
