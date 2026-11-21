@@ -158,6 +158,7 @@ class Store:
         self.path = path
         self.conn = connect(path)
         self._local = threading.local()
+        self.on_enqueue = None  # called on every queued change (SyncManager debounces a push)
 
     def tx(self):
         return Tx(self)
@@ -298,6 +299,8 @@ class Store:
 
     def enqueue(self, target, ref_id, op):
         """Adds an operation, coalescing with what is already queued for the object."""
+        if self.on_enqueue is not None:
+            self.on_enqueue()
         ops = self.pending_ops(target, ref_id)
         if op == "update" and ("create" in ops or "update" in ops):
             return

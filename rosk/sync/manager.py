@@ -1,5 +1,6 @@
 """Runs synchronization in a worker thread and reports status to the main loop."""
 
+import hashlib
 import logging
 import threading
 import time
@@ -18,6 +19,25 @@ SYNCING = "syncing"
 OFFLINE = "offline"
 ERROR = "error"
 NO_ACCOUNT = "no-account"
+
+PUSH_DELAY = 5          # seconds after the last local change before it is sent
+ACTIVE_INTERVAL = 60    # how often to look for remote changes while the window is active
+FOCUS_MIN_AGE = 30      # focusing the window syncs if the last sync is older than this
+
+
+def fingerprint(store, media_dir=None):
+    """A digest of what the UI shows, to tell whether a sync changed anything.
+    Pulls write remote_updated whenever Google's copy changed; local edits touch updated_at."""
+    h = hashlib.blake2b(digest_size=16)
+    for row in store.conn.execute("SELECT id, updated_at, remote_updated, deleted, media_json, "
+                                  "web_view_link FROM item ORDER BY id"):
+        h.update(repr(tuple(row)).encode())
+    for row in store.conn.execute("SELECT id, title, position, deleted, remote_id FROM collection "
+                                  "ORDER BY id"):
+        h.update(repr(tuple(row)).encode())
+    if media_dir is not None and media_dir.is_dir():
+        h.update(repr(sorted(p.name for p in media_dir.iterdir())).encode())
+    return h.hexdigest()
 
 
 class SyncManager(GObject.Object):
@@ -40,19 +60,30 @@ class SyncManager(GObject.Object):
         self._keep = None
         self._keep_key = None
         self._backoff = 0
+        self._quiet = False
+        self._again_quiet = False
         self.interval = 15 * 60
+        self.active = False
         self.enabled = True
         self._monitor = Gio.NetworkMonitor.get_default()
         self._monitor.connect("network-changed", self._on_network)
         self._schedule_periodic()
+        # every local change queued for Google pushes PUSH_DELAY seconds after the last one
+        repo.store.on_enqueue = self.request
 
     # ---------- public ----------
-    def request(self, delay=2.0):
-        """Asks for a sync soon. Repeated requests are coalesced."""
+    def request(self, delay=None, quiet=False):
+        """Asks for a sync soon. Repeated requests are coalesced: each one restarts the timer.
+        A quiet sync (polling) does not show the spinner; it stays quiet only if every
+        coalesced request was quiet."""
         if not self.enabled:
             return
         if self._timer:
             GLib.source_remove(self._timer)
+            self._quiet = self._quiet and quiet
+        else:
+            self._quiet = quiet
+        delay = PUSH_DELAY if delay is None else delay
         self._timer = GLib.timeout_add(int(delay * 1000), self._start)
 
     def now(self):
@@ -63,6 +94,15 @@ class SyncManager(GObject.Object):
             self.interval = seconds
             self._schedule_periodic()
 
+    def set_active(self, active):
+        """The main window is active: poll often and catch up right away."""
+        if active == self.active:
+            return
+        self.active = active
+        self._schedule_periodic()
+        if active and (self.last_sync is None or time.time() - self.last_sync > FOCUS_MIN_AGE):
+            self.request(0, quiet=True)
+
     @property
     def pending(self):
         return self.repo.store.pending_count()
@@ -71,10 +111,11 @@ class SyncManager(GObject.Object):
     def _schedule_periodic(self):
         if self._periodic:
             GLib.source_remove(self._periodic)
-        self._periodic = GLib.timeout_add_seconds(self.interval, self._tick)
+        self._periodic = GLib.timeout_add_seconds(
+            ACTIVE_INTERVAL if self.active else self.interval, self._tick)
 
     def _tick(self):
-        self.request(0)
+        self.request(0, quiet=True)
         return True
 
     def _on_network(self, monitor, available):
@@ -85,9 +126,11 @@ class SyncManager(GObject.Object):
     def _start(self):
         self._timer = None
         if self._thread and self._thread.is_alive():
+            self._again_quiet = self._quiet if not self._again else self._again_quiet and self._quiet
             self._again = True
             return False
-        self._set_state(SYNCING, "")
+        if not self._quiet:
+            self._set_state(SYNCING, "")
         self._thread = threading.Thread(target=self._run, name="rosk-sync", daemon=True)
         self._thread.start()
         return False
@@ -100,15 +143,19 @@ class SyncManager(GObject.Object):
     def _run(self):
         store = Store(config.db_path())
         state, message = IDLE, ""
+        changed = True
         try:
+            media = config.data_dir() / "media"
+            before = fingerprint(store, media)
             state, message = self._sync_tasks(store)
             self._sync_keep(store)
+            changed = fingerprint(store, media) != before
         except Exception as e:  # never let the worker die silently
             log.exception("sync failed")
             state, message = ERROR, str(e)
         finally:
             store.close()
-        GLib.idle_add(self._finished, state, message)
+        GLib.idle_add(self._finished, state, message, changed)
 
     def _sync_tasks(self, store):
         from ..auth import goa
@@ -174,13 +221,14 @@ class SyncManager(GObject.Object):
             self._keep = None
             self.keep_message = _("Keep sync failed: {}").format(e)
 
-    def _finished(self, state, message):
+    def _finished(self, state, message, changed=True):
         self.last_sync = time.time()
         self._set_state(state, message)
-        self.emit("data-changed")
+        if changed:  # an idle poll must not rebuild the lists under the user's hands
+            self.emit("data-changed")
         if self._again:
             self._again = False
-            self.request(1)
+            self.request(1, quiet=self._again_quiet)
         elif state == OFFLINE or (state == ERROR and self.pending):
             self._backoff = min(max(self._backoff * 2, 30), 15 * 60)
             self.request(self._backoff)

@@ -76,6 +76,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.repo.connect_changed(lambda *_: self._refresh())
         self.sync.connect("status-changed", lambda *_: self._update_sync_button())
         self.sync.connect("data-changed", lambda *_: self._refresh())
+        self.connect("notify::is-active", lambda w, _p: self.sync.set_active(w.is_active()))
         self.connect("close-request", self._on_close)
         self._do_refresh()
         self._update_sync_button()
