@@ -160,3 +160,31 @@ def test_images_pulled_and_downloaded(env, monkeypatch, tmp_path):
     note.trash()
     ks.sync()  # the note is gone: so is its image
     assert list(media.iterdir()) == []
+
+
+def test_shared_image_kept_while_used(env, monkeypatch, tmp_path):
+    import io
+    import urllib.request
+    keep, repo, ks = env
+    first = keep.createNote("First", "")
+    second = keep.createNote("Second", "")
+    _add_image(first, "shared.blob")
+    _add_image(second, "shared.blob")
+    keep.getMediaLink = lambda b: "https://example.invalid/" + b.id
+    monkeypatch.setattr(urllib.request, "urlopen", lambda url, timeout=None: io.BytesIO(b"img"))
+    ks.sync()
+    path = tmp_path / "media" / "shared.blob"
+    assert path.exists()
+
+    first.trash()
+    ks.sync()  # the second note still uses the image
+    assert path.exists()
+
+    iid = repo.store.item_by_remote("note", second.id)["id"]
+    repo.update(iid, archived=1)
+    ks.sync()  # archived notes still count
+    assert path.exists()
+
+    second.trash()
+    ks.sync()  # nobody uses it now
+    assert not path.exists()

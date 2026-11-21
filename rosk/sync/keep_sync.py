@@ -313,17 +313,20 @@ class KeepSync:
     MEDIA_PER_SYNC = 60  # the first sync of a big account spreads the downloads out
 
     def _fetch_media(self):
-        """Downloads images that are not on disk yet and removes the ones no note has."""
+        """Downloads images that are not on disk yet and removes the ones no note uses.
+
+        A file is removed only when no live note references it (archived notes count), so an
+        image shared by several notes stays as long as any of them is left."""
         media_dir = self.state_path.parent / "media"  # config.media_path() reads from here
         media_dir.mkdir(exist_ok=True)
-        wanted = {}
+        wanted = {}  # file name -> (note, blob) of the newest note that uses it
         for row in self.store.conn.execute(
                 "SELECT remote_id, media_json FROM item WHERE kind='note' AND remote_id IS NOT NULL"
                 " AND deleted=0 AND media_json != '[]' ORDER BY updated_at DESC"):
             for m in json.loads(row["media_json"]):
-                wanted[m["id"].replace("/", "_")] = (row["remote_id"], m["id"])
+                wanted.setdefault(m["id"].replace("/", "_"), (row["remote_id"], m["id"]))
         for f in media_dir.iterdir():
-            if f.name not in wanted:
+            if f.name not in wanted:  # not used by any note any more
                 f.unlink(missing_ok=True)
         fetched = 0
         for name, (note_id, blob_id) in wanted.items():
