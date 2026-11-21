@@ -1,0 +1,23 @@
+Package: rosk
+Architecture: all
+Version: 0.2.0
+Priority: optional
+Section: utils
+Maintainer: Sergei Miami <miami@blackcrystal.net>
+Installed-Size: 3004
+Depends: python3 (>= 3.12), python3-gi, gir1.2-glib-2.0, gir1.2-gtk-4.0, gir1.2-adw-1 (>= 1.6),
+ gir1.2-goa-1.0, gir1.2-secret-1, python3-pycryptodome, python3-requests, python3-urllib3
+Recommends: gnome-shell (>= 48), gnome-online-accounts, gir1.2-webkit-6.0
+Filename: pool/main/r/rosk/rosk_0.2.0_all.deb
+Size: 428920
+MD5sum: 74916904ee1c0f759e69f6e659a6a4bf
+SHA1: e4e50c1e3712d02d559e9a038b08a835a092a385
+SHA256: c47992241aab6d1d41a9cbf21f60572728fdde5eae192542943057819c2c6ecd
+SHA512: c31001125526db7ad0fbfca175611a63766784ab5731d6897cc8d74deac2e3fcfe47f9b8f74d818899a51406987ef6040165a79d5f3d9d0b8aada54b2c08a964
+Homepage: https://github.com/miamibc/rosk
+Description: quick tasks and notes for GNOME, synced with Google Tasks and Keep
+ Rosk keeps tasks and notes at hand in GNOME: a panel menu with today's tasks, quick
+ capture with dates, lists and labels typed inline, and a main window with lists,
+ subtasks, checklists and note cards. Tasks sync with Google Tasks through GNOME Online
+ Accounts, notes with Google Keep. Everything works offline and is sent later.
+

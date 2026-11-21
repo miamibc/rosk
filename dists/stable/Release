@@ -1,0 +1,28 @@
+Architectures: amd64 arm64
+Codename: stable
+Components: main
+Date: Sat, 21 Nov 2026 18:32:50 +0000
+Description: Rosk: tasks and notes for GNOME
+Label: Rosk
+Origin: Rosk
+Suite: stable
+MD5Sum:
+ 43589a216d192112eb2e91e1b2483421             1226 main/binary-amd64/Packages
+ 1e1bc50f1c50186ce4c7001c8c545a14              768 main/binary-amd64/Packages.gz
+ 43589a216d192112eb2e91e1b2483421             1226 main/binary-arm64/Packages
+ 1e1bc50f1c50186ce4c7001c8c545a14              768 main/binary-arm64/Packages.gz
+SHA1:
+ 3daeed5a3243e40a2de1f097d9ff582e7326bcfa             1226 main/binary-amd64/Packages
+ 7b08761f13f81e996020f7acfdab34bad157a599              768 main/binary-amd64/Packages.gz
+ 3daeed5a3243e40a2de1f097d9ff582e7326bcfa             1226 main/binary-arm64/Packages
+ 7b08761f13f81e996020f7acfdab34bad157a599              768 main/binary-arm64/Packages.gz
+SHA256:
+ fa71e3bec7fd7e75501b29a1bc9c460d2496dc98b278877b3a4395a05757d4d2             1226 main/binary-amd64/Packages
+ 397f9e0472de7f12f1ed822d9bc6aee2edafbfb64f5ec9c546787fe6a18d56af              768 main/binary-amd64/Packages.gz
+ fa71e3bec7fd7e75501b29a1bc9c460d2496dc98b278877b3a4395a05757d4d2             1226 main/binary-arm64/Packages
+ 397f9e0472de7f12f1ed822d9bc6aee2edafbfb64f5ec9c546787fe6a18d56af              768 main/binary-arm64/Packages.gz
+SHA512:
+ dae35b58655ed19b253b8be0f9870b8b11990e9722566f5c32ec98000535c2662d0aaba2ddbc28c6a3a7d6cbeb1780f428a1539c17ed75942ce2ddf1953e6435             1226 main/binary-amd64/Packages
+ 894d1db4112d088942fe9b6710034229cbe47e4b9bebc0a3f9edad7b565204b84ec5d7fb2ad2bcffc23d1dd1d688c3df99d66b0f68aa36221b6210a3ab236bf8              768 main/binary-amd64/Packages.gz
+ dae35b58655ed19b253b8be0f9870b8b11990e9722566f5c32ec98000535c2662d0aaba2ddbc28c6a3a7d6cbeb1780f428a1539c17ed75942ce2ddf1953e6435             1226 main/binary-arm64/Packages
+ 894d1db4112d088942fe9b6710034229cbe47e4b9bebc0a3f9edad7b565204b84ec5d7fb2ad2bcffc23d1dd1d688c3df99d66b0f68aa36221b6210a3ab236bf8              768 main/binary-arm64/Packages.gz
