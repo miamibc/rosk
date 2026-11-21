@@ -11,7 +11,7 @@ jobs:
     # (a PyPI build would need the GLib headers), so the venv is made like `make venv` does it.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: System packages
         run: |
           sudo apt-get update -q
@@ -27,7 +27,7 @@ jobs:
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Archive
         run: make dist
       - uses: actions/upload-artifact@v4
