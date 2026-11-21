@@ -167,3 +167,23 @@ def test_subtask_order_kept(env):
     assert [c["title"] for c in repo.children(iid)] == ["tickets", "hotel", "visa"]
     sync.sync()
     assert [c["title"] for c in repo.children(iid)] == ["tickets", "hotel", "visa"]
+
+
+def test_lists_skipped_tasks_still_pulled(env):
+    g, repo, sync, work = env
+    sync.sync()
+    reads = []
+    orig = g.list_tasklists
+    g.list_tasklists = lambda: (reads.append(1), orig())[1]
+    g.add_task(work, "from the phone")
+    sync.sync(lists=False)
+    assert reads == []  # the lists were not re-read
+    assert "from the phone" in titles(repo)
+
+
+def test_list_deleted_on_google_while_lists_skipped(env):
+    g, repo, sync, work = env
+    sync.sync()
+    g.delete_tasklist(work)
+    sync.sync(lists=False)  # 404 on its tasks: the lists are re-read and it goes away
+    assert [c["title"] for c in repo.store.collections("tasklist")] == ["My Tasks"]

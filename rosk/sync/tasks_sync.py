@@ -323,11 +323,24 @@ class TasksSync:
                 self.store.enqueue("item", item["id"], "move" if moved else "update")
 
     # ---------- full cycle ----------
-    def sync(self):
-        self.pull_lists()
+    def sync(self, lists=True):
+        """lists=False skips re-reading the task lists themselves (they change rarely); the tasks
+        in every list are pulled either way. A list deleted on Google shows up as a 404, and then
+        the lists are re-read after all."""
+        if lists:
+            self.pull_lists()
         for col in self.store.collections("tasklist"):
-            if col["remote_id"]:
+            if not col["remote_id"]:
+                continue
+            try:
                 self.pull_tasks(col)
+            except HttpError as e:
+                if e.status != 404 or lists:
+                    raise
+                lists = True
+                self.pull_lists()  # purges the list that is gone
+                if self.store.collection(col["id"]) is not None:
+                    self.pull_tasks(col)
         pushed = self.push()
         if pushed:
             # pick up server-side effects (positions, completed children)

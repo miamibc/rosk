@@ -62,6 +62,8 @@ class FakeTasks:
         self.lists.pop(lid, None)
 
     def list_tasks(self, lid, updated_min=None):
+        if lid not in self.lists:
+            raise HttpError(404, "Task list not found")  # like Google for a deleted list
         out = []
         for t in self.tasks.values():
             if t["_list"] != lid:

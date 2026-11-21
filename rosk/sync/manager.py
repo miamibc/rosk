@@ -31,6 +31,8 @@ AWAY_IDLE = 10 * 60
 FOCUS_MIN_AGE = 2 * 60   # focusing the window syncs if the last sync is older than this
 RETURN_MIN_AGE = 5 * 60  # coming back to the computer syncs if the last sync is older than this
 HEARTBEAT = 60           # local check of what the user is doing; no network
+LISTS_EVERY = 2          # polls re-read the Google Tasks lists themselves every other time;
+                         # the tasks in them are pulled on every sync
 ACTIVE, PRESENT, AWAY = "active", "present", "away"
 
 
@@ -62,6 +64,8 @@ class SyncManager(GObject.Object):
         self.message = ""
         self.keep_message = ""
         self.last_sync = None
+        self.last_lists_sync = None
+        self._with_lists = True
         self._thread = None
         self._again = False
         self._timer = None
@@ -187,7 +191,9 @@ class SyncManager(GObject.Object):
             return False
         if not self._quiet:
             self._set_state(SYNCING, "")
-        self._thread = threading.Thread(target=self._run, name="rosk-sync", daemon=True)
+        self._with_lists = self._wants_lists()
+        self._thread = threading.Thread(target=self._run, args=(self._with_lists,),
+                                        name="rosk-sync", daemon=True)
         self._thread.start()
         return False
 
@@ -196,14 +202,26 @@ class SyncManager(GObject.Object):
         self.message = message
         self.emit("status-changed")
 
-    def _run(self):
+    def _wants_lists(self):
+        """Pushes, the Refresh button and retries re-read the task lists; quiet polls only when
+        that was LISTS_EVERY poll intervals ago or a list change waits to be sent."""
+        if not self._quiet or self.state in (OFFLINE, ERROR) or self.last_lists_sync is None:
+            return True
+        if self.repo.store.conn.execute(
+                "SELECT 1 FROM outbox o JOIN collection c ON o.target='collection'"
+                " AND c.id=o.ref_id WHERE c.kind='tasklist' LIMIT 1").fetchone():
+            return True
+        due = LISTS_EVERY * self.poll_interval(self.mode()) - HEARTBEAT  # heartbeat jitter
+        return time.time() - self.last_lists_sync >= due
+
+    def _run(self, with_lists=True):
         store = Store(config.db_path())
         state, message = IDLE, ""
         changed = True
         try:
             media = config.data_dir() / "media"
             before = fingerprint(store, media)
-            state, message = self._sync_tasks(store)
+            state, message = self._sync_tasks(store, with_lists)
             self._sync_keep(store)
             changed = fingerprint(store, media) != before
         except Exception as e:  # never let the worker die silently
@@ -213,7 +231,7 @@ class SyncManager(GObject.Object):
             store.close()
         GLib.idle_add(self._finished, state, message, changed)
 
-    def _sync_tasks(self, store):
+    def _sync_tasks(self, store, lists=True):
         from ..auth import goa
         from .gtasks import TasksClient
         from .tasks_sync import TasksSync
@@ -233,7 +251,7 @@ class SyncManager(GObject.Object):
                 store.set_meta("account_email", account.email)
         client = TasksClient(goa.token_provider(account.goa_id))
         try:
-            TasksSync(store, client).sync()
+            TasksSync(store, client).sync(lists=lists)
         except HttpError as e:
             if e.status == 0:
                 return OFFLINE, _("No connection. Changes will be sent later.")
@@ -279,6 +297,8 @@ class SyncManager(GObject.Object):
 
     def _finished(self, state, message, changed=True):
         self.last_sync = time.time()
+        if self._with_lists and state == IDLE:
+            self.last_lists_sync = self.last_sync
         self._set_state(state, message)
         if changed:  # an idle poll must not rebuild the lists under the user's hands
             self.emit("data-changed")

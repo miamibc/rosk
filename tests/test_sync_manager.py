@@ -121,3 +121,22 @@ def test_heartbeat_polls_by_mode(mgr):
     m._heartbeat()
     run_loop(20)
     assert len(starts) == 2 and starts[-1][1] is True  # quietly
+
+
+def test_polls_reread_task_lists_every_other_time(mgr):
+    repo, m, _starts = mgr
+    m._idle_seconds = lambda: 0
+    m.active = False
+    interval = manager.PRESENT_INTERVAL
+    m._quiet = True
+    m.last_lists_sync = time.time() - interval  # one poll ago
+    assert m._wants_lists() is False
+    m.last_lists_sync = time.time() - 2 * interval
+    assert m._wants_lists() is True
+
+    m.last_lists_sync = time.time()
+    m._quiet = False  # Refresh button or a push
+    assert m._wants_lists() is True
+    m._quiet = True
+    repo.create_collection("tasklist", "New")  # a new list waits to be sent
+    assert m._wants_lists() is True
