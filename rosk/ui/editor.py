@@ -362,10 +362,19 @@ class Editor(Gtk.Box):
         self.is_checklist = item["checklist_json"] is not None
         if self.is_checklist:
             self.check_entries = json.loads(item["checklist_json"])
+            if getattr(self, "_check_item", None) != item["id"]:
+                self._check_item, self._check_limit = item["id"], self.CHECK_PAGE
             self.check_box = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
             self.check_box.add_css_class("boxed-list")
+            self.check_clear = Gtk.Button(label=_("Delete ticked items"), halign=Gtk.Align.END)
+            self.check_clear.add_css_class("flat")
+            self.check_clear.add_css_class("destructive-action")
+            self.check_clear.connect("clicked", self._check_clear_ticked)
             self._fill_checklist()
-            box.append(self.check_box)
+            lbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            lbox.append(self.check_box)
+            lbox.append(self.check_clear)
+            box.append(lbox)
         else:
             box.append(self._body_view(item, _("Write a note…")))
 
@@ -487,7 +496,9 @@ class Editor(Gtk.Box):
 
     def _fill_checklist(self):
         """The items in their own order, checked ones included: the add row on top,
-        "Load more" at the bottom when the list is long."""
+        "Load more" at the bottom when the list is long. Keeps the scroll position."""
+        adj = self.scroller.get_vadjustment()
+        scroll = adj.get_value()
         box = self.check_box
         while (child := box.get_first_child()) is not None:
             box.remove(child)
@@ -496,24 +507,80 @@ class Editor(Gtk.Box):
         add.connect("entry-activated", self._check_add)
         box.append(add)
         self._check_add_row = add
+        self._check_more_row = None
         limit = getattr(self, "_check_limit", self.CHECK_PAGE)
         for idx, entry in enumerate(self.check_entries[:limit]):
             box.append(self._check_row(idx, entry))
-        rest = len(self.check_entries) - limit
+        self._check_update_more()
+        self._check_update_clear()
+        # removing the rows took the focus away; GTK may scroll to wherever it lands
+        GLib.idle_add(lambda: (adj.set_value(min(scroll, adj.get_upper() - adj.get_page_size())),
+                               False)[1])
+
+    def _check_update_more(self):
+        rest = len(self.check_entries) - getattr(self, "_check_limit", self.CHECK_PAGE)
         if rest > 0:
-            more = Adw.ButtonRow(title=_("Load more ({})").format(rest))
-            more.connect("activated", self._check_more)
-            box.append(more)
+            if self._check_more_row is None:
+                self._check_more_row = Adw.ButtonRow()
+                self._check_more_row.connect("activated", self._check_more)
+                self.check_box.append(self._check_more_row)
+            self._check_more_row.set_title(_("Load more ({})").format(rest))
+        elif self._check_more_row is not None:
+            self.check_box.remove(self._check_more_row)
+            self._check_more_row = None
+
+    def _check_update_clear(self):
+        self.check_clear.set_visible(any(e.get("checked") for e in self.check_entries))
 
     def _check_more(self, *_a):
-        self._check_limit = getattr(self, "_check_limit", self.CHECK_PAGE) + self.CHECK_PAGE
+        """Adds the next page above the button: nothing is rebuilt, so nothing jumps."""
+        adj = self.scroller.get_vadjustment()
+        scroll = adj.get_value()
+        shown = getattr(self, "_check_limit", self.CHECK_PAGE)
+        self._check_limit = shown + self.CHECK_PAGE
+        pos = self._check_more_row.get_index()
+        first = None
+        for idx in range(shown, min(self._check_limit, len(self.check_entries))):
+            row = self._check_row(idx, self.check_entries[idx])
+            self.check_box.insert(row, pos)
+            pos += 1
+            first = first or row
+        if first is not None:
+            # the button may go away: hand the focus to the first new item (its checkbox)
+            # before that, or GTK moves it to the top of the list and scrolls there
+            first.get_child().get_first_child().get_next_sibling().grab_focus()
+        self._check_update_more()
+        GLib.idle_add(lambda: (adj.set_value(scroll), False)[1])
+
+    def _check_clear_ticked(self, _b):
+        before = [dict(e) for e in self.check_entries]
+        self.check_entries = [e for e in self.check_entries if not e.get("checked")]
+        removed = len(before) - len(self.check_entries)
         self._fill_checklist()
+        self._commit_checklist()
+        item_id = self.item_id
+        win = self.get_root()
+        if not hasattr(win, "toasts"):
+            return
+        toast = Adw.Toast(title=ngettext("{} item deleted", "{} items deleted", removed).format(removed),
+                          button_label=_("Undo"), timeout=6)
+
+        def undo(_t):
+            if self.item_id == item_id:
+                self.check_entries = before
+                self._fill_checklist()
+                self._commit_checklist()
+            else:
+                self.repo.update(item_id, checklist_json=json.dumps(before, ensure_ascii=False))
+        toast.connect("button-clicked", undo)
+        win.toasts.add_toast(toast)
 
     def _check_toggled(self, cb, idx):
         self.check_entries[idx]["checked"] = cb.get_active()
         e = self._check_entry_widgets.get(idx)
         if e is not None:
             (e.add_css_class if cb.get_active() else e.remove_css_class)("dim-label")
+        self._check_update_clear()
         self._save_checklist()
 
     def _check_drop(self, _t, value, _x, y, row, dst):
