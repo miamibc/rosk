@@ -26,6 +26,14 @@ h2 { font-size: clamp(2rem, 4.6vw, 3.45rem); letter-spacing: -.055em; }
 nav { display: flex; align-items: center; gap: clamp(12px, 3vw, 32px); }
 nav a, .footer a { text-decoration: none; }
 nav a:hover, .footer a:hover { color: var(--accent); }
+.language {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 40px;
+  color: var(--accent);
+  font-weight: 700;
+}
 
 .button {
   display: inline-flex;
@@ -168,7 +176,7 @@ code { font-size: .92em; overflow-wrap: anywhere; }
   .shell { width: calc(100% - 32px); }
   .top { min-height: 62px; gap: 8px; }
   nav a[href="#screens"] { display: none; }
-  nav { font-size: .875rem; }
+  nav { gap: 9px; font-size: .875rem; }
   .top .button { padding-inline: 11px; }
   .hero { padding-block: 40px; }
   .hero h1 { font-size: clamp(2.45rem, 8.8vw, 3.75rem); }

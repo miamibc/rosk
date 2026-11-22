@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Записал. Вычеркнул. Rosk — задачи и заметки для GNOME с быстрым вводом, утренней сводкой и синхронизацией с Google.">
+  <meta name="theme-color" content="#faf9f6">
+  <title>Rosk — задачи и заметки для GNOME</title>
+  <link rel="canonical" href="https://miamibc.github.io/rosk/ru/">
+  <link rel="alternate" hreflang="en" href="https://miamibc.github.io/rosk/">
+  <link rel="alternate" hreflang="ru" href="https://miamibc.github.io/rosk/ru/">
+  <link rel="alternate" hreflang="x-default" href="https://miamibc.github.io/rosk/">
+  <link rel="icon" href="../rosk-assets/rosk.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../rosk-assets/style.css">
+  <script src="../rosk-assets/site.js" defer></script>
+</head>
+<body>
+  <header class="shell top">
+    <a class="brand" href="./" aria-label="Rosk, главная"><img src="../rosk-assets/rosk.svg" alt="" width="36" height="36">Rosk</a>
+    <nav aria-label="Навигация">
+      <a href="#screens">Скриншоты</a>
+      <a href="https://github.com/miamibc/rosk">GitHub</a>
+      <a class="language" href="../" hreflang="en" lang="en" aria-label="Read in English">EN</a>
+      <a class="button outline" href="#install">Установить</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="shell hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Задачи и заметки для GNOME</p>
+        <h1 id="hero-title">Записал.<br><em>Вычеркнул.</em></h1>
+        <p class="lede">Читаешь письмо из банка и понимаешь, что завтра надо туда позвонить. Вот чем мне удобен Rosk — можно записать дело, пока письмо перед глазами.</p>
+        <a class="button primary" href="#install">Установить Rosk</a>
+      </div>
+      <div class="hero-visual">
+        <img class="main-shot" src="../rosk-assets/upcoming-light.png" alt="Окно Rosk с предстоящими задачами в светлой теме" width="1180" height="760">
+        <img class="quick-shot" src="../rosk-assets/quick-add.png" alt="Окно быстрого ввода с подсказками списков" width="531" height="342">
+      </div>
+    </section>
+
+    <section class="capture" aria-labelledby="capture-title">
+      <div class="shell capture-inner">
+        <div>
+          <h2 id="capture-title">Как добавить дело</h2>
+          <p>Нажми <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>, набери «Позвонить в банк завтра #работа» и нажми <kbd>Enter</kbd>. Звонок появится в списке «Работа» со сроком на завтра.</p>
+        </div>
+        <div class="example">
+          <p class="example-input"><span aria-hidden="true">+</span> Позвонить в банк <strong>завтра</strong> <strong>#работа</strong></p>
+          <div class="example-result">
+            <span class="check-ring" aria-hidden="true"></span>
+            <div>Позвонить в банк<div class="labels"><span>Завтра</span><span>Работа</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell screens" id="screens" aria-labelledby="screens-title">
+      <h2 id="screens-title">Задачи и заметки</h2>
+      <p class="section-lede">Если пользуешься Google Tasks, подключи его к Rosk. Вычеркнешь дело на телефоне — оно и на компьютере будет отмечено как выполненное. Для заметок можно подключить Google Keep. Без интернета тоже можно записывать, а когда появится связь, Rosk всё синхронизирует.</p>
+      <div class="gallery">
+        <figure>
+          <a class="screenshot" href="../rosk-assets/today.png" aria-label="Увеличить скриншот задач на сегодня"><img src="../rosk-assets/today.png" alt="Задачи на сегодня и просроченные задачи в тёмной теме" width="1180" height="760" loading="lazy"></a>
+          <figcaption><h3>Утренняя сводка</h3><p>Утром в одном уведомлении видно, что у тебя на сегодня и у каких дел уже прошёл срок.</p></figcaption>
+        </figure>
+        <figure>
+          <a class="screenshot" href="../rosk-assets/notes.png" aria-label="Увеличить скриншот заметок"><img src="../rosk-assets/notes.png" alt="Сетка цветных и закреплённых заметок в тёмной теме" width="1180" height="760" loading="lazy"></a>
+          <figcaption><h3>Заметки</h3><p>Если часто открываешь одну и ту же заметку, закрепи её сверху.</p></figcaption>
+        </figure>
+        <figure>
+          <a class="screenshot" href="../rosk-assets/note-editor.png" aria-label="Увеличить скриншот редактора списка"><img src="../rosk-assets/note-editor.png" alt="Редактор заметки со списком и флажками" width="1180" height="760" loading="lazy"></a>
+          <figcaption><h3>Списки с галочками</h3><p>В заметке можно вычёркивать пункты по одному.</p></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="shell install" id="install" aria-labelledby="install-title">
+      <div class="install-card">
+        <div>
+          <h2 id="install-title">Как поставить Rosk</h2>
+          <p>Для Ubuntu 25.04+ и Debian 13+ с GNOME 48 или новее.</p>
+          <a class="button primary" href="https://github.com/miamibc/rosk/releases/latest">Скачать .deb на GitHub</a>
+        </div>
+        <div>
+          <ol class="steps">
+            <li>Скачай <code>rosk_…_all.deb</code> со страницы релиза.</li>
+            <li>Открой файл в установщике пакетов или запусти <code>sudo apt install ./имя-пакета.deb</code> в папке загрузок.</li>
+            <li>Выйди из сеанса и войди снова, чтобы значок Rosk появился в панели GNOME.</li>
+          </ol>
+          <p class="setup">Чтобы подтянуть задачи из Google Tasks, добавь аккаунт Google в сетевые учётные записи GNOME. Чтобы подтянуть заметки, войди в Keep через настройки Rosk.</p>
+          <a class="text-link" href="https://github.com/miamibc/rosk/blob/master/README.ru.md#установка">Установка через APT или из исходников</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <a class="brand" href="./"><img src="../rosk-assets/rosk.svg" alt="" width="30" height="30">Rosk</a>
+    <a href="https://github.com/miamibc/rosk/blob/master/LICENSE">GPL-3.0+</a>
+  </footer>
+
+  <dialog class="lightbox" aria-label="Скриншот Rosk">
+    <form method="dialog"><button type="submit" aria-label="Закрыть скриншот">×</button></form>
+    <img alt="">
+  </dialog>
+</body>
+</html>
