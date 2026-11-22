@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Jot it down. Cross it off. Rosk is a GNOME app for tasks and notes with quick capture, a morning summary, and Google sync.">
+  <meta name="description" content="Add tasks and notes from the GNOME top panel. See what’s due each morning and sync with Google Tasks and Google Keep.">
   <meta name="theme-color" content="#faf9f6">
   <title>Rosk — Tasks and notes for GNOME</title>
   <link rel="canonical" href="https://miamibc.github.io/rosk/">
@@ -29,13 +29,13 @@
     <section class="shell hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Tasks and notes for GNOME</p>
-        <h1 id="hero-title">Jot it down.<br><em>Cross it off.</em></h1>
-        <p class="lede">You're reading an email from the bank and realize you need to call them tomorrow. With Rosk, you can write it down while the email is still open.</p>
+        <h1 id="hero-title">Write it down.<br><em>Mark it as done.</em></h1>
+        <p class="lede">Add a task or note from the GNOME top panel while you work.</p>
         <a class="button primary" href="#install">Install Rosk</a>
       </div>
       <div class="hero-visual">
         <img class="main-shot" src="rosk-assets/upcoming-light.png" alt="Upcoming tasks in Rosk, light theme" width="1180" height="760">
-        <img class="quick-shot" src="rosk-assets/quick-add.png" alt="Quick capture window with list suggestions" width="531" height="342">
+        <img class="quick-shot" src="rosk-assets/quick-add.png" alt="The task entry window suggests which list to use" width="531" height="342">
       </div>
     </section>
 
@@ -43,7 +43,7 @@
       <div class="shell capture-inner">
         <div>
           <h2 id="capture-title">Add a task in one line</h2>
-          <p>Press <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>, type “Call the bank tomorrow #work”, and hit <kbd>Enter</kbd>. The task lands in your Work list with tomorrow as the due date.</p>
+          <p>Need to call the bank tomorrow? Press <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>, type “Call the bank tomorrow #work”, and press <kbd>Enter</kbd>. Rosk adds it to your Work list and sets the due date to tomorrow.</p>
         </div>
         <div class="example">
           <p class="example-input"><span aria-hidden="true">+</span> Call the bank <strong>tomorrow</strong> <strong>#work</strong></p>
@@ -57,19 +57,19 @@
 
     <section class="shell screens" id="screens" aria-labelledby="screens-title">
       <h2 id="screens-title">Tasks and notes</h2>
-      <p class="section-lede">Connect Google Tasks and cross something off on your phone. It’ll show up as done on your computer too. You can also sync notes with Google Keep. Keep writing while you’re offline and Rosk will sync when you’re back online.</p>
+      <p class="section-lede">Rosk syncs tasks with Google Tasks and notes with Google Keep. Mark a task as done on your phone and Rosk will show it as done on your computer too. If you make changes offline, Rosk saves them and syncs when you’re back online.</p>
       <div class="gallery">
         <figure>
           <a class="screenshot" href="rosk-assets/today.png" aria-label="Enlarge the Today screenshot"><img src="rosk-assets/today.png" alt="Today’s tasks and overdue items in dark mode" width="1180" height="760" loading="lazy"></a>
-          <figcaption><h3>Morning summary</h3><p>One morning notification tells you what’s due today and what’s overdue.</p></figcaption>
+          <figcaption><h3>Morning reminder</h3><p>See what you need to do today and which tasks are already late.</p></figcaption>
         </figure>
         <figure>
           <a class="screenshot" href="rosk-assets/notes.png" aria-label="Enlarge the notes screenshot"><img src="rosk-assets/notes.png" alt="A grid of color-coded and pinned notes in dark mode" width="1180" height="760" loading="lazy"></a>
-          <figcaption><h3>Notes</h3><p>Pin a note to the top if you keep coming back to it.</p></figcaption>
+          <figcaption><h3>Notes</h3><p>Pin important notes so they stay at the top.</p></figcaption>
         </figure>
         <figure>
           <a class="screenshot" href="rosk-assets/note-editor.png" aria-label="Enlarge the checklist editor screenshot"><img src="rosk-assets/note-editor.png" alt="Note editor with a checklist" width="1180" height="760" loading="lazy"></a>
-          <figcaption><h3>Checklists</h3><p>Check off items one by one right in the note.</p></figcaption>
+          <figcaption><h3>Checklists</h3><p>Mark each item as done in the note.</p></figcaption>
         </figure>
       </div>
     </section>
@@ -85,9 +85,9 @@
           <ol class="steps">
             <li>Download <code>rosk_…_all.deb</code> from the release page.</li>
             <li>Open the file in your package installer or run <code>sudo apt install ./package-name.deb</code> from your Downloads folder.</li>
-            <li>Sign out and back in to load the Rosk icon in the GNOME panel.</li>
+            <li>Sign out of GNOME and sign in again. The Rosk icon will appear in the top panel.</li>
           </ol>
-          <p class="setup">To sync tasks, add your Google account in GNOME Online Accounts. For notes, sign in to Keep in Rosk’s settings.</p>
+          <p class="setup">For tasks, add your Google account under Online Accounts in GNOME Settings. For notes, sign in to Google Keep in Rosk’s settings.</p>
           <a class="text-link" href="https://github.com/miamibc/rosk/blob/master/README.md#install">Install via APT or from source</a>
         </div>
       </div>
