@@ -78,13 +78,13 @@
       <div class="install-card">
         <div>
           <h2 id="install-title">Install Rosk</h2>
-          <p>For Ubuntu 25.04+ and Debian 13+ with GNOME 48 or newer.</p>
-          <a class="button primary" href="https://github.com/miamibc/rosk/releases/latest">Download .deb from GitHub</a>
+          <p>Use Ubuntu 25.04 or later, or Debian 13 or later, with GNOME 48 or newer.</p>
+          <a class="button primary" data-release-download href="https://github.com/miamibc/rosk/releases/download/v0.2.0/rosk_0.2.0_all.deb"><span>Download Rosk <span data-release-version>0.2.0</span> (.deb)</span></a>
         </div>
         <div>
           <ol class="steps">
-            <li>Download <code>rosk_…_all.deb</code> from the release page.</li>
-            <li>Open the file in your package installer or run <code>sudo apt install ./package-name.deb</code> from your Downloads folder.</li>
+            <li>Download <code data-release-file>rosk_0.2.0_all.deb</code>.</li>
+            <li>Open a terminal in the folder where you saved the file and run:<br><code>sudo apt install ./<span data-release-file>rosk_0.2.0_all.deb</span></code></li>
             <li>Sign out of GNOME and sign in again. The Rosk icon will appear in the top panel.</li>
           </ol>
           <p class="setup">For tasks, add your Google account under Online Accounts in GNOME Settings. For notes, sign in to Google Keep in Rosk’s settings.</p>

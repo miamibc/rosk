@@ -78,13 +78,13 @@
       <div class="install-card">
         <div>
           <h2 id="install-title">Как поставить Rosk</h2>
-          <p>Для Ubuntu 25.04+ и Debian 13+ с GNOME 48 или новее.</p>
-          <a class="button primary" href="https://github.com/miamibc/rosk/releases/latest">Скачать .deb на GitHub</a>
+          <p>Для Ubuntu 25.04 или новее либо Debian 13 или новее. Нужен GNOME 48 или новее.</p>
+          <a class="button primary" data-release-download href="https://github.com/miamibc/rosk/releases/download/v0.2.0/rosk_0.2.0_all.deb"><span>Скачать Rosk <span data-release-version>0.2.0</span> (.deb)</span></a>
         </div>
         <div>
           <ol class="steps">
-            <li>Скачай <code>rosk_…_all.deb</code> со страницы релиза.</li>
-            <li>Открой файл в установщике пакетов или запусти <code>sudo apt install ./имя-пакета.deb</code> в папке загрузок.</li>
+            <li>Скачай <code data-release-file>rosk_0.2.0_all.deb</code>.</li>
+            <li>Открой терминал в папке, куда скачал файл, и выполни команду:<br><code>sudo apt install ./<span data-release-file>rosk_0.2.0_all.deb</span></code></li>
             <li>Выйди из сеанса и войди снова, чтобы значок Rosk появился в панели GNOME.</li>
           </ol>
           <p class="setup">Чтобы подтянуть задачи из Google Tasks, добавь аккаунт Google в сетевые учётные записи GNOME. Чтобы подтянуть заметки, войди в Keep через настройки Rosk.</p>
